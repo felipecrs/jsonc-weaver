@@ -14,7 +14,8 @@
     "one",
     "four",
     "three", // element comment
-    "five"
+    "five",
+    6
   ], /* another inline comment */
   "someObject": {
     "a": 1,

@@ -9,7 +9,8 @@
     "one",
     "four",
     "three",
-    "five"
+    "five",
+    6
   ],
   "someObject": {
     "a": 1,

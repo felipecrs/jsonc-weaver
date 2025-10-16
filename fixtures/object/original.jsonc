@@ -14,7 +14,8 @@
     "one",
     "two",
     "three", // element comment
-    5 // this comment will be removed because type changed
+    5, // this comment will be removed because type changed
+    "six" // this comment will be removed because type changed too
   ], /* another inline comment */
   "removedProperty": "toBeRemoved",
   "someObject": {

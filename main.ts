@@ -205,20 +205,30 @@ function updateArrayValue(prop: ObjectProp, value: JsonValue[]): void {
   }
 
   // Update or insert elements
+  // Process in reverse when we need to remove and insert to handle index shifts
+  const indicesToReplace: number[] = [];
+
   for (let i = 0; i < value.length; i++) {
     const newValue = value[i];
+
     if (i < existingElements.length) {
       const existingElement = existingElements[i];
-      // If type is changing, remove and insert to avoid preserving comments
+      // If type is changing, mark for removal
       if (!isSameType(existingElement, newValue)) {
-        removeNode(existingElement);
-        existingArray.insert(i, newValue);
+        indicesToReplace.push(i);
       } else {
         replaceNode(existingElement, newValue);
       }
     } else {
-      existingArray.append(value[i]);
+      existingArray.append(newValue);
     }
+  }
+
+  // Now handle type changes in reverse order to avoid index issues
+  for (let i = indicesToReplace.length - 1; i >= 0; i--) {
+    const index = indicesToReplace[i];
+    removeNode(existingElements[index]);
+    existingArray.insert(index, value[index]);
   }
 }
 
