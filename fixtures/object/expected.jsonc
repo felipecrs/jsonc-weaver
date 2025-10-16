@@ -8,7 +8,7 @@
   // Comment before an array
   "modifiedWeirdArray": ["still makes no sense" // weird comment
   ],
-  "renamedProperty": "newvalue", // should not be removed
+  "renamedProperty": "newvalue",
   "inlineArray": ["element"], // inline comment
   "someArray": [
     "one",
@@ -23,7 +23,7 @@
   "replacedWithArray": [
     "someValue"
   ],
-  "anotherReplacedWithArray": [
+  "renamedWithArray": [
     "anotherValue"
-  ] // keep this
+  ]
 }

@@ -55,15 +55,17 @@ function updateObject(targetObj: JsonObject, newObj: object): void {
       }
 
       if (renamedFromProp) {
-        // Rename: replace the old property with the new one in place
-        renamedFromProp.prop.replaceWith(key, value);
+        // Rename: remove the old property and insert new one without comments
+        const oldIndex = renamedFromProp.prop.propertyIndex();
+        renamedFromProp.prop.remove();
+        const newProp = targetObj.insert(oldIndex, key, value);
         processedKeys.add(renamedFromProp.key);
         propsToRemove.delete(renamedFromProp.key);
-        insertIndex = renamedFromProp.prop.propertyIndex() + 1;
+        insertIndex = oldIndex + 1;
 
         // Format new array as multiline
         if (Array.isArray(value) && value.length > 0) {
-          targetObj.getIfArrayOrThrow(key).ensureMultiline();
+          newProp.valueIfArrayOrThrow().ensureMultiline();
         }
       } else {
         // New property: insert at current position
