@@ -15,8 +15,10 @@
     "one",
     "four",
     "three",
+    4.5555,
     "five",
-    6
+    6,
+    false
   ],
   "someObject": {
     "a": 1,

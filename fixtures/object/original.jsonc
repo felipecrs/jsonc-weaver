@@ -6,16 +6,18 @@
       comment */
   "modifiedString": "previous",
   // Comment before an array
-  "modifiedWeirdArray": ["makes no sense" // weird comment
-  ],
+  "modifiedWeirdArray": ["makes no sense"
+  ], // will be less weird
   "toBeRenamedProperty": "oldvalue", // this comment will be removed
   "inlineArray": ["element"], // inline comment
   "someArray": [
     "one",
     "two",
     "three", // element comment
+    4.555500, // keep this comment
     5, // this comment will be removed because type changed
-    "six" // this comment will be removed because type changed too
+    "six", // this comment will be removed because type changed too
+    true // this comment will be removed because a primitive value changed
   ], /* another inline comment */
   "toBeRemoved": "property",
   "someObject": {

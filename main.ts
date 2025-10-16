@@ -101,51 +101,15 @@ function updatePropertyValue(prop: ObjectProp, value: JsonValue): void {
   prop.setValue(value);
 }
 
-function isSameType(node: Node, newValue: JsonValue): boolean {
-  if (typeof newValue === "string") return node.isString();
-  if (typeof newValue === "number") return node.isNumber();
-  if (typeof newValue === "boolean") return node.isBoolean();
-  if (newValue === null) return node.isNull();
-  if (Array.isArray(newValue)) return node.asArray() !== undefined;
-  if (typeof newValue === "object") return node.asObject() !== undefined;
+function shouldPreserveComments(node: Node, newValue: JsonValue): boolean {
+  if (typeof newValue === "string" && node.isString()) return newValue === node.asStringLitOrThrow().decodedValue();
+  if (typeof newValue === "number" && node.isNumber()) return newValue === Number(node.asNumberLitOrThrow().value());
+  if (typeof newValue === "boolean" && node.isBoolean()) return newValue === node.asBooleanLitOrThrow().value();
+  if (newValue === null && node.isNull()) return true;
+  if (Array.isArray(newValue) && node.asArray()) return true;
+  if (typeof newValue === "object" && node.asObject()) return true;
 
   return false;
-}
-
-function replaceNode(node: Node, newValue: JsonValue): void {
-  if (node.isString()) {
-    node.asStringLitOrThrow().replaceWith(newValue);
-    return;
-  }
-
-  if (node.isNumber()) {
-    node.asNumberLitOrThrow().replaceWith(newValue);
-    return;
-  }
-
-  if (node.isBoolean()) {
-    node.asBooleanLitOrThrow().replaceWith(newValue);
-    return;
-  }
-
-  if (node.isNull()) {
-    node.asNullKeywordOrThrow().replaceWith(newValue);
-    return;
-  }
-
-  if (node.isContainer()) {
-    const asArray = node.asArray();
-    if (asArray) {
-      asArray.replaceWith(newValue);
-      return;
-    }
-
-    const asObject = node.asObjectOrThrow();
-    asObject.replaceWith(newValue);
-    return;
-  }
-
-  throw new Error("Unsupported node type for replacement");
 }
 
 function removeNode(node: Node): void {
@@ -213,18 +177,19 @@ function updateArrayValue(prop: ObjectProp, value: JsonValue[]): void {
 
     if (i < existingElements.length) {
       const existingElement = existingElements[i];
-      // If type is changing, mark for removal
-      if (!isSameType(existingElement, newValue)) {
-        indicesToReplace.push(i);
+      if (shouldPreserveComments(existingElement, newValue)) {
+        // Value hasn't changed - skip update to preserve original formatting
+        continue;
       } else {
-        replaceNode(existingElement, newValue);
+        // Value changed or type changed - mark for replacement
+        indicesToReplace.push(i);
       }
     } else {
       existingArray.append(newValue);
     }
   }
 
-  // Now handle type changes in reverse order to avoid index issues
+  // Now handle replacements in reverse order to avoid index issues
   for (let i = indicesToReplace.length - 1; i >= 0; i--) {
     const index = indicesToReplace[i];
     removeNode(existingElements[index]);
