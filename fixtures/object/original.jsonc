@@ -1,0 +1,26 @@
+{
+  // Comment at start
+  "bool": true,
+  "modifiedSingleLineArray": ["should-change"],
+  /* Multi-line
+      comment */
+  "modifiedString": "previous",
+  // Comment before an array
+  "modifiedWeirdArray": ["makes no sense" // weird comment
+  ],
+  "toBeRenamedProperty": "oldvalue", // should not be removed
+  "inlineArray": ["element"], // inline comment
+  "someArray": [
+    "one",
+    "two",
+    "three" // element comment
+  ], /* another inline comment */
+  "removedProperty": "toBeRemoved",
+  "someObject": {
+    "a": 1,
+    "b": 2,
+    "c": 3 // object comment
+  },
+  "replacedWithArray": "someString",
+  "anotherToBeReplacedWithArray": "anotherString" // keep this
+}

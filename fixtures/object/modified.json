@@ -1,0 +1,24 @@
+{
+  "bool": false,
+  "modifiedSingleLineArray": ["changed"],
+  "modifiedString": "after",
+  "modifiedWeirdArray": ["still makes no sense"],
+  "renamedProperty": "newvalue",
+  "inlineArray": ["element"],
+  "someArray": [
+    "one",
+    "four",
+    "three"
+  ],
+  "someObject": {
+    "a": 1,
+    "d": 4,
+    "c": 3
+  },
+  "replacedWithArray": [
+    "someValue"
+  ],
+  "anotherReplacedWithArray": [
+    "anotherValue"
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "[typescript][json][jsonc]": {
+    "editor.defaultFormatter": "denoland.vscode-deno",
+    "editor.indentSize": 2
+  }
+}
