@@ -8,7 +8,8 @@
   "someArray": [
     "one",
     "four",
-    "three"
+    "three",
+    "five"
   ],
   "someObject": {
     "a": 1,

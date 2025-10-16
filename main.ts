@@ -7,14 +7,12 @@ import type {
 } from "jsonc-morph";
 import { parse } from "jsonc-morph";
 
-/**
- * Updates a JSON object in place, preserving comments and formatting.
- * Handles nested objects and arrays recursively.
- */
 function updateObject(targetObj: JsonObject, newObj: object): void {
   // Build a map of existing properties by name
   const existingProps = new Map(
-    targetObj.properties().map((prop) => [prop.nameOrThrow().decodedValue(), prop])
+    targetObj
+      .properties()
+      .map((prop) => [prop.nameOrThrow().decodedValue(), prop]),
   );
 
   // Track which existing properties we've already processed
@@ -101,6 +99,17 @@ function updatePropertyValue(prop: ObjectProp, value: JsonValue): void {
 
   // For primitive values (string, number, boolean, null), just update
   prop.setValue(value);
+}
+
+function isSameType(node: Node, newValue: JsonValue): boolean {
+  if (typeof newValue === "string") return node.isString();
+  if (typeof newValue === "number") return node.isNumber();
+  if (typeof newValue === "boolean") return node.isBoolean();
+  if (newValue === null) return node.isNull();
+  if (Array.isArray(newValue)) return node.asArray() !== undefined;
+  if (typeof newValue === "object") return node.asObject() !== undefined;
+
+  return false;
 }
 
 function replaceNode(node: Node, newValue: JsonValue): void {
@@ -197,8 +206,16 @@ function updateArrayValue(prop: ObjectProp, value: JsonValue[]): void {
 
   // Update or insert elements
   for (let i = 0; i < value.length; i++) {
+    const newValue = value[i];
     if (i < existingElements.length) {
-      replaceNode(existingElements[i], value[i]);
+      const existingElement = existingElements[i];
+      // If type is changing, remove and insert to avoid preserving comments
+      if (!isSameType(existingElement, newValue)) {
+        removeNode(existingElement);
+        existingArray.insert(i, newValue);
+      } else {
+        replaceNode(existingElement, newValue);
+      }
     } else {
       existingArray.append(value[i]);
     }
@@ -207,7 +224,7 @@ function updateArrayValue(prop: ObjectProp, value: JsonValue[]): void {
 
 function updateObjectValue(
   prop: ObjectProp,
-  value: Record<string, JsonValue>
+  value: Record<string, JsonValue>,
 ): void {
   const existingObj = prop.valueIfObject();
   if (!existingObj) {

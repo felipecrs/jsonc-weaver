@@ -13,7 +13,8 @@
   "someArray": [
     "one",
     "four",
-    "three" // element comment
+    "three", // element comment
+    "five"
   ], /* another inline comment */
   "someObject": {
     "a": 1,
