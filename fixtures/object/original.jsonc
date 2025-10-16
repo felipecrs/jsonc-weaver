@@ -17,7 +17,7 @@
     5, // this comment will be removed because type changed
     "six" // this comment will be removed because type changed too
   ], /* another inline comment */
-  "removedProperty": "toBeRemoved",
+  "toBeRemoved": "property",
   "someObject": {
     "a": 1,
     "b": 2,

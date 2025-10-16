@@ -1,10 +1,16 @@
 {
   "bool": false,
-  "modifiedSingleLineArray": ["changed"],
+  "modifiedSingleLineArray": [
+    "changed"
+  ],
   "modifiedString": "after",
-  "modifiedWeirdArray": ["still makes no sense"],
+  "modifiedWeirdArray": [
+    "still makes no sense"
+  ],
   "renamedProperty": "newvalue",
-  "inlineArray": ["element"],
+  "inlineArray": [
+    "element"
+  ],
   "someArray": [
     "one",
     "four",
