@@ -12,7 +12,9 @@
     "element"
   ],
   "someArray": [
-    "one",
+    "a",
+    true,
+    "changed",
     "four",
     "three",
     4.5555,
@@ -23,7 +25,7 @@
   "someObject": {
     "a": 1,
     "d": 4,
-    "c": 3
+    "c": "three"
   },
   "replacedWithArray": [
     "someValue"

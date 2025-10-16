@@ -10,7 +10,9 @@
   "renamedProperty": "newvalue",
   "inlineArray": ["element"], // inline comment
   "someArray": [
-    "one",
+    "a",
+    true,
+    "changed",
     "four",
     "three", // element comment
     4.555500, // keep this comment
@@ -21,7 +23,7 @@
   "someObject": {
     "a": 1,
     "d": 4,
-    "c": 3 // object comment
+    "c": "three" // object comment
   },
   "replacedWithArray": [
     "someValue"

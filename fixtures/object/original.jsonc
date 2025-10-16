@@ -12,6 +12,8 @@
   "inlineArray": ["element"], // inline comment
   "someArray": [
     "one",
+    false, // this comment will be removed because a primitive value changed
+    "should change", // this comment will be removed because a primitive value changed
     "two",
     "three", // element comment
     4.555500, // keep this comment
