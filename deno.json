@@ -7,6 +7,9 @@
     "@std/assert": "jsr:@std/assert@^1.0.15",
     "jsonc-morph": "jsr:@david/jsonc-morph@^0.2.0"
   },
+  "exclude": [
+    "vendor"
+  ],
   "fmt": {
     "exclude": [
       "fixtures"

@@ -1,4 +1,10 @@
-import type { JsonObject, JsonValue, Node, ObjectProp, RootNode } from "jsonc-morph";
+import type {
+  JsonObject,
+  JsonValue,
+  Node,
+  ObjectProp,
+  RootNode,
+} from "jsonc-morph";
 import { parse } from "jsonc-morph";
 
 /**
@@ -8,7 +14,7 @@ import { parse } from "jsonc-morph";
 function updateObject(targetObj: JsonObject, newObj: object): void {
   // Build a map of existing properties by name
   const existingProps = new Map(
-    targetObj.properties().map((prop) => [prop.name()?.decodedValue(), prop])
+    targetObj.properties().map((prop) => [prop.nameOrThrow().decodedValue(), prop])
   );
 
   // Track which existing properties we've already processed
@@ -17,9 +23,6 @@ function updateObject(targetObj: JsonObject, newObj: object): void {
   // Identify properties to be removed (exist in old but not in new)
   const propsToRemove = new Set<string>();
   for (const key of existingProps.keys()) {
-    if (key === undefined) {
-      continue;
-    }
     if (!(key in newObj)) {
       propsToRemove.add(key);
     }
@@ -40,9 +43,6 @@ function updateObject(targetObj: JsonObject, newObj: object): void {
       // Property is new - check if it might be a rename
       let renamedFromProp = null;
       for (const [oldKey, oldProp] of existingProps) {
-        if (oldKey === undefined) {
-          continue;
-        }
         if (
           propsToRemove.has(oldKey) &&
           !processedKeys.has(oldKey) &&
@@ -61,20 +61,18 @@ function updateObject(targetObj: JsonObject, newObj: object): void {
         propsToRemove.delete(renamedFromProp.key);
         insertIndex = renamedFromProp.prop.propertyIndex() + 1;
 
-        // Format arrays as multiline
+        // Format new array as multiline
         if (Array.isArray(value) && value.length > 0) {
-          const renamedProp = targetObj.get(key);
-          const arrayValue = renamedProp?.valueIfArray();
-          arrayValue?.ensureMultiline();
+          targetObj.getIfArrayOrThrow(key).ensureMultiline();
         }
       } else {
         // New property: insert at current position
         const newProp = targetObj.insert(insertIndex, key, value);
         insertIndex++;
 
-        // Format arrays as multiline
+        // Format new array as multiline
         if (Array.isArray(value) && value.length > 0) {
-          newProp.valueIfArray()?.ensureMultiline();
+          newProp.valueIfArrayOrThrow().ensureMultiline();
         }
       }
     }
@@ -82,119 +80,142 @@ function updateObject(targetObj: JsonObject, newObj: object): void {
 
   // Remove properties that no longer exist in the new object
   for (const [key, prop] of existingProps) {
-    if (key === undefined) {
-      continue;
-    }
     if (propsToRemove.has(key)) {
       prop.remove();
     }
   }
 }
 
-/**
- * Updates a property value, recursively handling objects and arrays
- * to preserve comments.
- */
 function updatePropertyValue(prop: ObjectProp, value: JsonValue): void {
   if (Array.isArray(value)) {
     updateArrayValue(prop, value);
-  } else if (value !== null && typeof value === "object") {
-    updateObjectValue(prop, value);
-  } else {
-    // For primitive values (string, number, boolean, null), just update
-    prop.setValue(value);
+    return;
   }
+
+  if (value !== null && typeof value === "object") {
+    updateObjectValue(prop, value);
+    return;
+  }
+
+  // For primitive values (string, number, boolean, null), just update
+  prop.setValue(value);
 }
 
-/**
- * Replaces a node with a new value. Handles all node types.
- */
 function replaceNode(node: Node, newValue: JsonValue): void {
   if (node.isString()) {
-    node.asStringLit()?.replaceWith(newValue);
-  } else if (node.isNumber()) {
-    node.asNumberLit()?.replaceWith(newValue);
-  } else if (node.isBoolean()) {
-    node.asBooleanLit()?.replaceWith(newValue);
-  } else if (node.isNull()) {
-    node.asNullKeyword()?.replaceWith(newValue);
-  } else if (node.isContainer()) {
+    node.asStringLitOrThrow().replaceWith(newValue);
+    return;
+  }
+
+  if (node.isNumber()) {
+    node.asNumberLitOrThrow().replaceWith(newValue);
+    return;
+  }
+
+  if (node.isBoolean()) {
+    node.asBooleanLitOrThrow().replaceWith(newValue);
+    return;
+  }
+
+  if (node.isNull()) {
+    node.asNullKeywordOrThrow().replaceWith(newValue);
+    return;
+  }
+
+  if (node.isContainer()) {
     const asArray = node.asArray();
     if (asArray) {
       asArray.replaceWith(newValue);
-    } else {
-      node.asObject()?.replaceWith(newValue);
+      return;
     }
+
+    const asObject = node.asObjectOrThrow();
+    asObject.replaceWith(newValue);
+    return;
   }
+
+  throw new Error("Unsupported node type for replacement");
 }
 
-/**
- * Removes a node from its parent. Handles all node types.
- */
 function removeNode(node: Node): void {
   if (node.isString()) {
-    node.asStringLit()?.remove();
-  } else if (node.isNumber()) {
-    node.asNumberLit()?.remove();
-  } else if (node.isBoolean()) {
-    node.asBooleanLit()?.remove();
-  } else if (node.isNull()) {
-    node.asNullKeyword()?.remove();
-  } else if (node.isContainer()) {
+    node.asStringLitOrThrow().remove();
+    return;
+  }
+
+  if (node.isNumber()) {
+    node.asNumberLitOrThrow().remove();
+    return;
+  }
+
+  if (node.isBoolean()) {
+    node.asBooleanLitOrThrow().remove();
+    return;
+  }
+
+  if (node.isNull()) {
+    node.asNullKeywordOrThrow().remove();
+    return;
+  }
+
+  if (node.isContainer()) {
     const asArray = node.asArray();
     if (asArray) {
       asArray.remove();
-    } else {
-      node.asObject()?.remove();
+      return;
     }
+
+    const asObject = node.asObjectOrThrow();
+    asObject.remove();
+    return;
   }
+
+  throw new Error("Unsupported node type for removal");
 }
 
-/**
- * Updates an array property value, preserving comments on elements.
- */
 function updateArrayValue(prop: ObjectProp, value: JsonValue[]): void {
   const existingArray = prop.valueIfArray();
-  if (existingArray) {
-    const existingElements = existingArray.elements();
-
-    // Remove excess elements from the end first to avoid index issues
-    for (let i = existingElements.length - 1; i >= value.length; i--) {
-      removeNode(existingElements[i]);
-    }
-
-    // Update or insert elements
-    for (let i = 0; i < value.length; i++) {
-      if (i < existingElements.length) {
-        replaceNode(existingElements[i], value[i]);
-      } else {
-        existingArray.append(value[i]);
-      }
-    }
-  } else {
+  if (!existingArray) {
     // Not an array currently, replace with array and format as multiline
     prop.setValue(value);
+
+    // Format new array as multiline
     if (value.length > 0) {
-      const newArray = prop.valueIfArray();
-      if (newArray) {
-        newArray.ensureMultiline();
-      }
+      prop.valueIfArrayOrThrow().ensureMultiline();
+    }
+    return;
+  }
+
+  const existingElements = existingArray.elements();
+
+  // Remove excess elements from the end first to avoid index issues
+  for (let i = existingElements.length - 1; i >= value.length; i--) {
+    removeNode(existingElements[i]);
+  }
+
+  // Update or insert elements
+  for (let i = 0; i < value.length; i++) {
+    if (i < existingElements.length) {
+      replaceNode(existingElements[i], value[i]);
+    } else {
+      existingArray.append(value[i]);
     }
   }
 }
 
-/**
- * Updates an object property value, recursively preserving comments.
- */
-function updateObjectValue(prop: ObjectProp, value: Record<string, JsonValue>): void {
+function updateObjectValue(
+  prop: ObjectProp,
+  value: Record<string, JsonValue>
+): void {
   const existingObj = prop.valueIfObject();
-  if (existingObj) {
-    // Object exists - recursively update it
-    updateObject(existingObj, value);
-  } else {
+  if (!existingObj) {
     // Not an object currently - replace with the new object value
     prop.setValue(value);
+    return;
   }
+
+  // Object exists - recursively update it
+  updateObject(existingObj, value);
 }
 
 /**
