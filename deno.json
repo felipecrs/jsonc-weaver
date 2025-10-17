@@ -12,10 +12,5 @@
   "exclude": [
     "vendor",
     "jsonc-morph"
-  ],
-  "fmt": {
-    "exclude": [
-      "fixtures"
-    ]
-  }
+  ]
 }
