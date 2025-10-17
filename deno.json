@@ -9,7 +9,7 @@
   },
   "exclude": [
     "vendor",
-    "json-morph"
+    "jsonc-morph"
   ],
   "fmt": {
     "exclude": [
