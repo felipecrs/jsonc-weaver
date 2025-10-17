@@ -145,8 +145,8 @@ function updateArray(existingArray: JsonArray, newValues: JsonValue[]): void {
 
     if (
       !matched[i] &&
-      (updateNestedValue(element, newValues[i]) ||
-        shouldPreserveComments(element, newValues[i]))
+      (tryUpdateNestedValue(element, newValues[i]) ||
+        areValuesEquivalent(element, newValues[i]))
     ) {
       matched[i] = true;
       continue;
@@ -156,10 +156,10 @@ function updateArray(existingArray: JsonArray, newValues: JsonValue[]): void {
     for (let j = i + 1; j < Math.min(i + 3, existingElements.length); j++) {
       if (
         !matched[j] &&
-        shouldPreserveComments(existingElements[j], newValues[i])
+        areValuesEquivalent(existingElements[j], newValues[i])
       ) {
         matched[j] = true;
-        updateNestedValue(existingElements[j], newValues[i]);
+        tryUpdateNestedValue(existingElements[j], newValues[i]);
         foundMatch = true;
         break;
       }
@@ -176,7 +176,7 @@ function updateArray(existingArray: JsonArray, newValues: JsonValue[]): void {
     const index = indicesToReplace[i];
     const insertedElement = existingArray.insert(index + 1, newValues[index]);
     if (hasSingleElement) {
-      removePreviousWhitespaces(insertedElement);
+      removePrecedingWhitespace(insertedElement);
     }
     removeNode(existingElements[index]);
   }
@@ -217,7 +217,7 @@ function updatePropertyValue(property: ObjectProp, newValue: JsonValue): void {
   property.setValue(newValue);
 }
 
-function updateNestedValue(element: Node, newValue: JsonValue): boolean {
+function tryUpdateNestedValue(element: Node, newValue: JsonValue): boolean {
   if (
     newValue !== null &&
     typeof newValue === "object" &&
@@ -241,7 +241,7 @@ function updateNestedValue(element: Node, newValue: JsonValue): boolean {
   return false;
 }
 
-function shouldPreserveComments(node: Node, newValue: JsonValue): boolean {
+function areValuesEquivalent(node: Node, newValue: JsonValue): boolean {
   if (typeof newValue === "string" && node.isString()) {
     return newValue === node.asStringLitOrThrow().decodedValue();
   }
@@ -304,7 +304,7 @@ function removeNode(node: Node): void {
   throw new Error("Unsupported node type for removal");
 }
 
-function removePreviousWhitespaces(node: Node): void {
+function removePrecedingWhitespace(node: Node): void {
   const previous = node.previousSibling();
   if (previous === undefined) {
     return;
@@ -316,6 +316,6 @@ function removePreviousWhitespaces(node: Node): void {
     previous.asStringLit()?.rawValue().trim() === ""
   ) {
     previous.remove();
-    removePreviousWhitespaces(node);
+    removePrecedingWhitespace(node);
   }
 }
