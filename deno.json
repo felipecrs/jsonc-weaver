@@ -19,6 +19,9 @@
   ],
   "publish": {
     "exclude": [
+      "*",
+      ".*",
+      "!main.ts",
       "!jsonc-morph/lib/",
       "!jsonc-morph/mod.ts"
     ]
