@@ -37,5 +37,6 @@
     "c": 3 // object comment
   },
   "replacedWithArray": "someString",
+  // preserved comment
   "toBeRenamedWithArray": "anotherString" // this comment will be removed too
 }

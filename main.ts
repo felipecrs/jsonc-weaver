@@ -110,8 +110,8 @@ function updateObject(
 
     if (renamedFromProp) {
       const oldIndex = renamedFromProp.prop.propertyIndex();
+      const newProp = existingObject.insert(oldIndex + 1, key, value);
       renamedFromProp.prop.remove();
-      const newProp = existingObject.insert(oldIndex, key, value);
       processedKeys.add(renamedFromProp.key);
       propsToRemove.delete(renamedFromProp.key);
       insertIndex = oldIndex + 1;

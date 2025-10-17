@@ -38,6 +38,7 @@
   "replacedWithArray": [
     "someValue"
   ],
+  // preserved comment
   "renamedWithArray": [
     "anotherValue"
   ]
