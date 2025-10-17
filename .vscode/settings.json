@@ -1,6 +1,8 @@
 {
   "[typescript][json][jsonc]": {
-    "editor.defaultFormatter": "denoland.vscode-deno",
-    "editor.indentSize": 2
-  }
+    "editor.defaultFormatter": "denoland.vscode-deno"
+  },
+  "editor.indentSize": 2,
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true
 }
