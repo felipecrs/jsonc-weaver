@@ -6,14 +6,18 @@
       comment */
   "modifiedString": "after",
   // Comment before an array
-  "modifiedWeirdArray": ["still makes no sense"], // will be less weird
+  "modifiedWeirdArray": ["still makes no sense"
+  ], // will be less weird
   "renamedProperty": "newvalue",
   "inlineArray": ["element"], // inline comment
   "someArray": [
+    // Comment at start of array
+    // it has 2 lines
     "a",
     true,
     "changed",
     "four",
+    // There is a comment here
     "three", // element comment
     4.555500, // keep this comment
     "five",

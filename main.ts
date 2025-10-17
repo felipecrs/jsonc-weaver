@@ -102,9 +102,15 @@ function updatePropertyValue(prop: ObjectProp, value: JsonValue): void {
 }
 
 function shouldPreserveComments(node: Node, newValue: JsonValue): boolean {
-  if (typeof newValue === "string" && node.isString()) return newValue === node.asStringLitOrThrow().decodedValue();
-  if (typeof newValue === "number" && node.isNumber()) return newValue === Number(node.asNumberLitOrThrow().value());
-  if (typeof newValue === "boolean" && node.isBoolean()) return newValue === node.asBooleanLitOrThrow().value();
+  if (typeof newValue === "string" && node.isString()) {
+    return newValue === node.asStringLitOrThrow().decodedValue();
+  }
+  if (typeof newValue === "number" && node.isNumber()) {
+    return newValue === Number(node.asNumberLitOrThrow().value());
+  }
+  if (typeof newValue === "boolean" && node.isBoolean()) {
+    return newValue === node.asBooleanLitOrThrow().value();
+  }
   if (newValue === null && node.isNull()) return true;
   if (Array.isArray(newValue) && node.asArray()) return true;
   if (typeof newValue === "object" && node.asObject()) return true;
@@ -190,10 +196,29 @@ function updateArrayValue(prop: ObjectProp, value: JsonValue[]): void {
   }
 
   // Now handle replacements in reverse order to avoid index issues
+  const singleElement = existingArray.elements().length === 1;
   for (let i = indicesToReplace.length - 1; i >= 0; i--) {
     const index = indicesToReplace[i];
-    removeNode(existingElements[index]);
-    existingArray.insert(index, value[index]);
+    const existingElement = existingElements[index];
+    const inserted = existingArray.insert(index + 1, value[index]);
+
+    if (singleElement) {
+      removePreviousWhitespaces(inserted);
+    }
+
+    removeNode(existingElement);
+  }
+}
+
+function removePreviousWhitespaces(node: Node): void {
+  const previous = node.previousSibling();
+  if (previous === undefined) {
+    return;
+  }
+
+  if (previous.isWhitespace() || previous.isNewline() || previous.asStringLit()?.rawValue().trim() === "") {
+    previous.remove();
+    removePreviousWhitespaces(node);
   }
 }
 
