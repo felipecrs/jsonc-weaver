@@ -22,6 +22,8 @@
       "*",
       ".*",
       "!main.ts",
+      "!LICENSE",
+      "!README.md",
       "!jsonc-morph/lib/",
       "!jsonc-morph/mod.ts"
     ]
