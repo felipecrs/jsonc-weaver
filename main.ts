@@ -1,11 +1,14 @@
 import type {
-  JsonArray,
-  JsonObject,
+  JsonArray as JsoncMorphArray,
+  JsonObject as JsoncMorphObject,
   JsonValue,
   Node,
   ObjectProp,
 } from "jsonc-morph";
 import { parse } from "jsonc-morph";
+
+export type JsonObject = { [key: string]: JsonValue };
+export type JsonArray = JsonValue[];
 
 /**
  * Weaves changes from a modified object or array back into the original JSONC string,
@@ -43,7 +46,7 @@ import { parse } from "jsonc-morph";
  */
 export function weave(
   original: string,
-  modified: object | JsonValue[]
+  modified: JsonObject | JsonArray
 ): string {
   const root = parse(original, {
     allowComments: true,
@@ -61,7 +64,10 @@ export function weave(
   return root.toString();
 }
 
-function updateObject(existingObject: JsonObject, newObject: object): void {
+function updateObject(
+  existingObject: JsoncMorphObject,
+  newObject: object
+): void {
   const existingProps = new Map(
     existingObject
       .properties()
@@ -130,7 +136,10 @@ function updateObject(existingObject: JsonObject, newObject: object): void {
   }
 }
 
-function updateArray(existingArray: JsonArray, newValues: JsonValue[]): void {
+function updateArray(
+  existingArray: JsoncMorphArray,
+  newValues: JsonValue[]
+): void {
   const existingElements = existingArray.elements();
   const matched = new Array(existingElements.length).fill(false);
   const indicesToReplace: number[] = [];
