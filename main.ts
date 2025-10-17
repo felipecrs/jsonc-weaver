@@ -7,6 +7,60 @@ import type {
 } from "jsonc-morph";
 import { parse } from "jsonc-morph";
 
+/**
+ * Weaves changes from a modified object or array back into the original JSONC string,
+ * preserving comments, formatting, and structure.
+ *
+ * @param original - The original JSONC string
+ * @param modified - The modified object or array containing the desired changes
+ * @returns The updated JSONC string with changes applied and formatting preserved
+ *
+ * @example
+ * Original JSONC:
+ * ```jsonc
+ * {
+ *   // This is a comment
+ *   "name": "old-name",
+ *   "version": "1.0.0"
+ * }
+ * ```
+ *
+ * Usage:
+ * ```typescript
+ * const original = await readFile('original.jsonc');
+ * const modified = { name: "new-name", version: "2.0.0" };
+ * const result = weave(original, modified);
+ * ```
+ *
+ * Result:
+ * ```jsonc
+ * {
+ *   // This is a comment
+ *   "name": "new-name",
+ *   "version": "2.0.0"
+ * }
+ * ```
+ */
+export function weave(
+  original: string,
+  modified: object | JsonValue[]
+): string {
+  const root = parse(original, {
+    allowComments: true,
+    allowTrailingCommas: true,
+  });
+
+  if (Array.isArray(modified)) {
+    const rootArray = root.asArrayOrThrow();
+    updateArray(rootArray, modified);
+  } else {
+    const rootObject = root.asObjectOrThrow();
+    updateObject(rootObject, modified);
+  }
+
+  return root.toString();
+}
+
 function updateObject(existingObject: JsonObject, newObject: object): void {
   const existingProps = new Map(
     existingObject
@@ -76,6 +130,64 @@ function updateObject(existingObject: JsonObject, newObject: object): void {
   }
 }
 
+function updateArray(existingArray: JsonArray, newValues: JsonValue[]): void {
+  const existingElements = existingArray.elements();
+  const matched = new Array(existingElements.length).fill(false);
+  const indicesToReplace: number[] = [];
+
+  for (let i = 0; i < newValues.length; i++) {
+    if (i >= existingElements.length) {
+      existingArray.append(newValues[i]);
+      continue;
+    }
+
+    const element = existingElements[i];
+
+    if (
+      !matched[i] &&
+      (updateNestedValue(element, newValues[i]) ||
+        shouldPreserveComments(element, newValues[i]))
+    ) {
+      matched[i] = true;
+      continue;
+    }
+
+    let foundMatch = false;
+    for (let j = i + 1; j < Math.min(i + 3, existingElements.length); j++) {
+      if (
+        !matched[j] &&
+        shouldPreserveComments(existingElements[j], newValues[i])
+      ) {
+        matched[j] = true;
+        updateNestedValue(existingElements[j], newValues[i]);
+        foundMatch = true;
+        break;
+      }
+    }
+
+    if (!foundMatch && !matched[i]) {
+      indicesToReplace.push(i);
+      matched[i] = true;
+    }
+  }
+
+  const hasSingleElement = existingElements.length === 1;
+  for (let i = indicesToReplace.length - 1; i >= 0; i--) {
+    const index = indicesToReplace[i];
+    const insertedElement = existingArray.insert(index + 1, newValues[index]);
+    if (hasSingleElement) {
+      removePreviousWhitespaces(insertedElement);
+    }
+    removeNode(existingElements[index]);
+  }
+
+  for (let i = existingElements.length - 1; i >= 0; i--) {
+    if (!matched[i]) {
+      removeNode(existingElements[i]);
+    }
+  }
+}
+
 function updatePropertyValue(property: ObjectProp, newValue: JsonValue): void {
   if (Array.isArray(newValue)) {
     const existingArray = property.valueIfArray();
@@ -103,6 +215,30 @@ function updatePropertyValue(property: ObjectProp, newValue: JsonValue): void {
   }
 
   property.setValue(newValue);
+}
+
+function updateNestedValue(element: Node, newValue: JsonValue): boolean {
+  if (
+    newValue !== null &&
+    typeof newValue === "object" &&
+    !Array.isArray(newValue)
+  ) {
+    const object = element.asObject();
+    if (object) {
+      updateObject(object, newValue);
+      return true;
+    }
+  }
+
+  if (Array.isArray(newValue)) {
+    const array = element.asArray();
+    if (array) {
+      updateArray(array, newValue);
+      return true;
+    }
+  }
+
+  return false;
 }
 
 function shouldPreserveComments(node: Node, newValue: JsonValue): boolean {
@@ -168,88 +304,6 @@ function removeNode(node: Node): void {
   throw new Error("Unsupported node type for removal");
 }
 
-function updateArray(existingArray: JsonArray, newValues: JsonValue[]): void {
-  const existingElements = existingArray.elements();
-  const matched = new Array(existingElements.length).fill(false);
-  const indicesToReplace: number[] = [];
-
-  for (let i = 0; i < newValues.length; i++) {
-    if (i >= existingElements.length) {
-      existingArray.append(newValues[i]);
-      continue;
-    }
-
-    const element = existingElements[i];
-
-    if (
-      !matched[i] &&
-      (updateNested(element, newValues[i]) ||
-        shouldPreserveComments(element, newValues[i]))
-    ) {
-      matched[i] = true;
-      continue;
-    }
-
-    let foundMatch = false;
-    for (let j = i + 1; j < Math.min(i + 3, existingElements.length); j++) {
-      if (
-        !matched[j] &&
-        shouldPreserveComments(existingElements[j], newValues[i])
-      ) {
-        matched[j] = true;
-        updateNested(existingElements[j], newValues[i]);
-        foundMatch = true;
-        break;
-      }
-    }
-
-    if (!foundMatch && !matched[i]) {
-      indicesToReplace.push(i);
-      matched[i] = true;
-    }
-  }
-
-  const hasSingleElement = existingElements.length === 1;
-  for (let i = indicesToReplace.length - 1; i >= 0; i--) {
-    const index = indicesToReplace[i];
-    const insertedElement = existingArray.insert(index + 1, newValues[index]);
-    if (hasSingleElement) {
-      removePreviousWhitespaces(insertedElement);
-    }
-    removeNode(existingElements[index]);
-  }
-
-  for (let i = existingElements.length - 1; i >= 0; i--) {
-    if (!matched[i]) {
-      removeNode(existingElements[i]);
-    }
-  }
-}
-
-function updateNested(element: Node, newValue: JsonValue): boolean {
-  if (
-    newValue !== null &&
-    typeof newValue === "object" &&
-    !Array.isArray(newValue)
-  ) {
-    const object = element.asObject();
-    if (object) {
-      updateObject(object, newValue);
-      return true;
-    }
-  }
-
-  if (Array.isArray(newValue)) {
-    const array = element.asArray();
-    if (array) {
-      updateArray(array, newValue);
-      return true;
-    }
-  }
-
-  return false;
-}
-
 function removePreviousWhitespaces(node: Node): void {
   const previous = node.previousSibling();
   if (previous === undefined) {
@@ -264,58 +318,4 @@ function removePreviousWhitespaces(node: Node): void {
     previous.remove();
     removePreviousWhitespaces(node);
   }
-}
-
-/**
- * Weaves changes from a modified object or array back into the original JSONC string,
- * preserving comments, formatting, and structure.
- *
- * @param original - The original JSONC string
- * @param modified - The modified object or array containing the desired changes
- * @returns The updated JSONC string with changes applied and formatting preserved
- *
- * @example
- * Original JSONC:
- * ```jsonc
- * {
- *   // This is a comment
- *   "name": "old-name",
- *   "version": "1.0.0"
- * }
- * ```
- *
- * Usage:
- * ```typescript
- * const original = await readFile('original.jsonc');
- * const modified = { name: "new-name", version: "2.0.0" };
- * const result = weave(original, modified);
- * ```
- *
- * Result:
- * ```jsonc
- * {
- *   // This is a comment
- *   "name": "new-name",
- *   "version": "2.0.0"
- * }
- * ```
- */
-export function weave(
-  original: string,
-  modified: object | JsonValue[]
-): string {
-  const root = parse(original, {
-    allowComments: true,
-    allowTrailingCommas: true,
-  });
-
-  if (Array.isArray(modified)) {
-    const rootArray = root.asArrayOrThrow();
-    updateArray(rootArray, modified);
-  } else {
-    const rootObject = root.asObjectOrThrow();
-    updateObject(rootObject, modified);
-  }
-
-  return root.toString();
 }
