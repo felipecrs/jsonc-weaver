@@ -1,4 +1,5 @@
 import type {
+  JsonArray,
   JsonObject,
   JsonValue,
   Node,
@@ -169,73 +170,81 @@ function removeNode(node: Node): void {
   throw new Error("Unsupported node type for removal");
 }
 
-function updateArray(
-  existingArray: NonNullable<ReturnType<Node["asArray"]>>,
-  value: JsonValue[]
-): void {
+function updateArray(existingArray: JsonArray, value: JsonValue[]): void {
   const existingElements = existingArray.elements();
+  const matched = new Array(existingElements.length).fill(false);
+  const toReplace: number[] = [];
 
-  // Remove excess elements from the end first to avoid index issues
-  for (let i = existingElements.length - 1; i >= value.length; i--) {
-    removeNode(existingElements[i]);
-  }
-
-  // Update or insert elements
-  const indicesToReplace: number[] = [];
-
+  // Match each new value with existing elements
   for (let i = 0; i < value.length; i++) {
-    const newValue = value[i];
+    if (i >= existingElements.length) {
+      existingArray.append(value[i]);
+      continue;
+    }
 
-    if (i < existingElements.length) {
-      const existingElement = existingElements[i];
+    const elem = existingElements[i];
 
-      // Handle nested objects - recursively update them
+    // Check if current position matches (update nested or preserve)
+    if (
+      !matched[i] &&
+      (updateNested(elem, value[i]) || shouldPreserveComments(elem, value[i]))
+    ) {
+      matched[i] = true;
+      continue;
+    }
+
+    // Look ahead for a match (max 2 positions)
+    let foundMatch = false;
+    for (let j = i + 1; j < Math.min(i + 3, existingElements.length); j++) {
       if (
-        newValue !== null &&
-        typeof newValue === "object" &&
-        !Array.isArray(newValue)
+        !matched[j] &&
+        shouldPreserveComments(existingElements[j], value[i])
       ) {
-        const existingObj = existingElement.asObject();
-        if (existingObj) {
-          updateObject(existingObj, newValue);
-          continue;
-        }
+        matched[j] = true;
+        updateNested(existingElements[j], value[i]);
+        foundMatch = true;
+        break;
       }
+    }
 
-      // Handle nested arrays - recursively update them
-      if (Array.isArray(newValue)) {
-        const existingArr = existingElement.asArray();
-        if (existingArr) {
-          updateArray(existingArr, newValue);
-          continue;
-        }
-      }
-
-      if (shouldPreserveComments(existingElement, newValue)) {
-        // Value hasn't changed - skip update to preserve original formatting
-        continue;
-      } else {
-        // Value changed or type changed - mark for replacement
-        indicesToReplace.push(i);
-      }
-    } else {
-      existingArray.append(newValue);
+    // No match found - replace current position
+    if (!foundMatch && !matched[i]) {
+      toReplace.push(i);
+      matched[i] = true;
     }
   }
 
-  // Now handle replacements in reverse order to avoid index issues
-  const singleElement = existingArray.elements().length === 1;
-  for (let i = indicesToReplace.length - 1; i >= 0; i--) {
-    const index = indicesToReplace[i];
-    const existingElement = existingElements[index];
-    const inserted = existingArray.insert(index + 1, value[index]);
-
-    if (singleElement) {
-      removePreviousWhitespaces(inserted);
-    }
-
-    removeNode(existingElement);
+  // Apply changes in reverse order to maintain indices
+  const singleElement = existingElements.length === 1;
+  for (let i = toReplace.length - 1; i >= 0; i--) {
+    const idx = toReplace[i];
+    const inserted = existingArray.insert(idx + 1, value[idx]);
+    if (singleElement) removePreviousWhitespaces(inserted);
+    removeNode(existingElements[idx]);
   }
+
+  // Remove unmatched elements (includes excess elements)
+  for (let i = existingElements.length - 1; i >= 0; i--) {
+    if (!matched[i]) removeNode(existingElements[i]);
+  }
+}
+
+function updateNested(element: Node, value: JsonValue): boolean {
+  if (value !== null && typeof value === "object" && !Array.isArray(value)) {
+    const obj = element.asObject();
+    if (obj) {
+      updateObject(obj, value);
+      return true;
+    }
+  }
+  if (Array.isArray(value)) {
+    const arr = element.asArray();
+    if (arr) {
+      updateArray(arr, value);
+      return true;
+    }
+  }
+  return false;
 }
 
 function removePreviousWhitespaces(node: Node): void {

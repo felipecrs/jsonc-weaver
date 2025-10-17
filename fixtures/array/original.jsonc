@@ -24,6 +24,7 @@
     "six", // this comment will be removed because type changed too
     true // this comment will be removed because a primitive value changed
   ], /* another inline comment */
+  "toBeRemoved", // should be removed,
   {
     "a": 1,
     "b": 2,
