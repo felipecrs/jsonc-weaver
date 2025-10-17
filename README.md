@@ -6,7 +6,7 @@ Modify JSONC files programmatically while preserving comments and formatting.
 
 Parse your JSONC with any parser, modify the object, then weave the changes back.
 
-**Original JSONC:**
+**`original.jsonc`**:
 
 ```jsonc
 {
@@ -30,7 +30,7 @@ Parse your JSONC with any parser, modify the object, then weave the changes back
 import { weave } from "@felipecrs/jsonc-weaver";
 import { parse } from "@std/jsonc";
 
-const data = parse(original);
+const data = parse(await Deno.readTextFile("original.jsonc"));
 
 // Modify properties
 data.name = "awesome-app";
@@ -49,9 +49,11 @@ delete data.oldSetting;
 data.newSetting = "added";
 
 const result = weave(original, data);
+
+await Deno.writeTextFile("result.jsonc", result);
 ```
 
-**Result:**
+**`result.jsonc`**:
 
 ```jsonc
 {
@@ -71,3 +73,7 @@ const result = weave(original, data);
 
 > [!IMPORTANT]
 > The order of properties in the modified object will determine their order in the output JSONC. Avoid reordering properties in your code to maintain the original order.
+
+## Credits
+
+This project is powered by [@david/jsonc-morph](https://github.com/dsherret/jsonc-morph).
