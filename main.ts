@@ -22,8 +22,7 @@ export type JsonArray = JsonValue[];
  * Original JSONC:
  * ```jsonc
  * {
- *   // This is a comment
- *   "name": "old-name",
+ *   "name": "old-name", // a comment
  *   "version": "1.0.0"
  * }
  * ```
@@ -31,15 +30,16 @@ export type JsonArray = JsonValue[];
  * Usage:
  * ```typescript
  * const original = await readFile('original.jsonc');
- * const modified = { name: "new-name", version: "2.0.0" };
+ * const modified = JSONC.parse(original);
+ * modified.name = "new-name";
+ * modified.version = "2.0.0";
  * const result = weave(original, modified);
  * ```
  *
  * Result:
  * ```jsonc
  * {
- *   // This is a comment
- *   "name": "new-name",
+ *   "name": "new-name", // a comment
  *   "version": "2.0.0"
  * }
  * ```
