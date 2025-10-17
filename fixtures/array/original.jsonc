@@ -9,7 +9,7 @@
   ["makes no sense"// comment removed
   ], // weird comment
   "toBeRenamedProperty", // should be removed
-  ["element"], // inline comment
+  ["element"/* inline comment */],
   [
     // Comment at start of array
     // it has 2 lines
