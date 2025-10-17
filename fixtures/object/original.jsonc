@@ -11,10 +11,13 @@
   "toBeRenamedProperty": "oldvalue", // this comment will be removed
   "inlineArray": ["element"], // inline comment
   "someArray": [
+    // Comment at start of array
+    // it has 2 lines
     "one",
     false, // this comment will be removed because a primitive value changed
     "should change", // this comment will be removed because a primitive value changed
     "two",
+    // There is a comment here
     "three", // element comment
     4.555500, // keep this comment
     5, // this comment will be removed because type changed
