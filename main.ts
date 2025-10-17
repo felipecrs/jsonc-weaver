@@ -7,9 +7,9 @@ import type {
 } from "jsonc-morph";
 import { parse } from "jsonc-morph";
 
-function updateObject(targetObj: JsonObject, newObj: object): void {
+function updateObject(existingObject: JsonObject, newObject: object): void {
   const existingProps = new Map(
-    targetObj
+    existingObject
       .properties()
       .map((prop) => [prop.nameOrThrow().decodedValue(), prop])
   );
@@ -18,14 +18,14 @@ function updateObject(targetObj: JsonObject, newObj: object): void {
   const propsToRemove = new Set<string>();
 
   for (const key of existingProps.keys()) {
-    if (!(key in newObj)) {
+    if (!(key in newObject)) {
       propsToRemove.add(key);
     }
   }
 
   let insertIndex = 0;
 
-  for (const [key, value] of Object.entries(newObj)) {
+  for (const [key, value] of Object.entries(newObject)) {
     processedKeys.add(key);
     const existingProp = existingProps.get(key);
 
@@ -51,7 +51,7 @@ function updateObject(targetObj: JsonObject, newObj: object): void {
     if (renamedFromProp) {
       const oldIndex = renamedFromProp.prop.propertyIndex();
       renamedFromProp.prop.remove();
-      const newProp = targetObj.insert(oldIndex, key, value);
+      const newProp = existingObject.insert(oldIndex, key, value);
       processedKeys.add(renamedFromProp.key);
       propsToRemove.delete(renamedFromProp.key);
       insertIndex = oldIndex + 1;
@@ -60,7 +60,7 @@ function updateObject(targetObj: JsonObject, newObj: object): void {
         newProp.valueIfArrayOrThrow().ensureMultiline();
       }
     } else {
-      const newProp = targetObj.insert(insertIndex, key, value);
+      const newProp = existingObject.insert(insertIndex, key, value);
       insertIndex++;
 
       if (Array.isArray(value) && value.length > 0) {
@@ -76,33 +76,33 @@ function updateObject(targetObj: JsonObject, newObj: object): void {
   }
 }
 
-function updatePropertyValue(prop: ObjectProp, value: JsonValue): void {
-  if (Array.isArray(value)) {
-    const existingArray = prop.valueIfArray();
+function updatePropertyValue(property: ObjectProp, newValue: JsonValue): void {
+  if (Array.isArray(newValue)) {
+    const existingArray = property.valueIfArray();
     if (existingArray) {
-      updateArray(existingArray, value);
+      updateArray(existingArray, newValue);
       return;
     }
 
-    prop.setValue(value);
-    if (value.length > 0) {
-      prop.valueIfArrayOrThrow().ensureMultiline();
+    property.setValue(newValue);
+    if (newValue.length > 0) {
+      property.valueIfArrayOrThrow().ensureMultiline();
     }
     return;
   }
 
-  if (value !== null && typeof value === "object") {
-    const existingObj = prop.valueIfObject();
-    if (existingObj) {
-      updateObject(existingObj, value);
+  if (newValue !== null && typeof newValue === "object") {
+    const existingObject = property.valueIfObject();
+    if (existingObject) {
+      updateObject(existingObject, newValue);
       return;
     }
 
-    prop.setValue(value);
+    property.setValue(newValue);
     return;
   }
 
-  prop.setValue(value);
+  property.setValue(newValue);
 }
 
 function shouldPreserveComments(node: Node, newValue: JsonValue): boolean {
@@ -155,9 +155,9 @@ function removeNode(node: Node): void {
   }
 
   if (node.isContainer()) {
-    const asArray = node.asArray();
-    if (asArray) {
-      asArray.remove();
+    const array = node.asArray();
+    if (array) {
+      array.remove();
       return;
     }
 
@@ -168,22 +168,23 @@ function removeNode(node: Node): void {
   throw new Error("Unsupported node type for removal");
 }
 
-function updateArray(existingArray: JsonArray, value: JsonValue[]): void {
+function updateArray(existingArray: JsonArray, newValues: JsonValue[]): void {
   const existingElements = existingArray.elements();
   const matched = new Array(existingElements.length).fill(false);
-  const toReplace: number[] = [];
+  const indicesToReplace: number[] = [];
 
-  for (let i = 0; i < value.length; i++) {
+  for (let i = 0; i < newValues.length; i++) {
     if (i >= existingElements.length) {
-      existingArray.append(value[i]);
+      existingArray.append(newValues[i]);
       continue;
     }
 
-    const elem = existingElements[i];
+    const element = existingElements[i];
 
     if (
       !matched[i] &&
-      (updateNested(elem, value[i]) || shouldPreserveComments(elem, value[i]))
+      (updateNested(element, newValues[i]) ||
+        shouldPreserveComments(element, newValues[i]))
     ) {
       matched[i] = true;
       continue;
@@ -193,29 +194,29 @@ function updateArray(existingArray: JsonArray, value: JsonValue[]): void {
     for (let j = i + 1; j < Math.min(i + 3, existingElements.length); j++) {
       if (
         !matched[j] &&
-        shouldPreserveComments(existingElements[j], value[i])
+        shouldPreserveComments(existingElements[j], newValues[i])
       ) {
         matched[j] = true;
-        updateNested(existingElements[j], value[i]);
+        updateNested(existingElements[j], newValues[i]);
         foundMatch = true;
         break;
       }
     }
 
     if (!foundMatch && !matched[i]) {
-      toReplace.push(i);
+      indicesToReplace.push(i);
       matched[i] = true;
     }
   }
 
-  const singleElement = existingElements.length === 1;
-  for (let i = toReplace.length - 1; i >= 0; i--) {
-    const idx = toReplace[i];
-    const inserted = existingArray.insert(idx + 1, value[idx]);
-    if (singleElement) {
-      removePreviousWhitespaces(inserted);
+  const hasSingleElement = existingElements.length === 1;
+  for (let i = indicesToReplace.length - 1; i >= 0; i--) {
+    const index = indicesToReplace[i];
+    const insertedElement = existingArray.insert(index + 1, newValues[index]);
+    if (hasSingleElement) {
+      removePreviousWhitespaces(insertedElement);
     }
-    removeNode(existingElements[idx]);
+    removeNode(existingElements[index]);
   }
 
   for (let i = existingElements.length - 1; i >= 0; i--) {
@@ -225,19 +226,23 @@ function updateArray(existingArray: JsonArray, value: JsonValue[]): void {
   }
 }
 
-function updateNested(element: Node, value: JsonValue): boolean {
-  if (value !== null && typeof value === "object" && !Array.isArray(value)) {
-    const obj = element.asObject();
-    if (obj) {
-      updateObject(obj, value);
+function updateNested(element: Node, newValue: JsonValue): boolean {
+  if (
+    newValue !== null &&
+    typeof newValue === "object" &&
+    !Array.isArray(newValue)
+  ) {
+    const object = element.asObject();
+    if (object) {
+      updateObject(object, newValue);
       return true;
     }
   }
 
-  if (Array.isArray(value)) {
-    const arr = element.asArray();
-    if (arr) {
-      updateArray(arr, value);
+  if (Array.isArray(newValue)) {
+    const array = element.asArray();
+    if (array) {
+      updateArray(array, newValue);
       return true;
     }
   }
@@ -308,8 +313,8 @@ export function weave(
     const rootArray = root.asArrayOrThrow();
     updateArray(rootArray, modified);
   } else {
-    const rootObj = root.asObjectOrThrow();
-    updateObject(rootObj, modified);
+    const rootObject = root.asObjectOrThrow();
+    updateObject(rootObject, modified);
   }
 
   return root.toString();
