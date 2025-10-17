@@ -88,12 +88,27 @@ function updateObject(targetObj: JsonObject, newObj: object): void {
 
 function updatePropertyValue(prop: ObjectProp, value: JsonValue): void {
   if (Array.isArray(value)) {
-    updateArrayValue(prop, value);
+    const existingArray = prop.valueIfArray();
+    if (existingArray) {
+      updateArray(existingArray, value);
+    } else {
+      // Not an array currently, replace with array and format as multiline
+      prop.setValue(value);
+      if (value.length > 0) {
+        prop.valueIfArrayOrThrow().ensureMultiline();
+      }
+    }
     return;
   }
 
   if (value !== null && typeof value === "object") {
-    updateObjectValue(prop, value);
+    const existingObj = prop.valueIfObject();
+    if (existingObj) {
+      updateObject(existingObj, value);
+    } else {
+      // Not an object currently - replace with the new object value
+      prop.setValue(value);
+    }
     return;
   }
 
@@ -154,19 +169,10 @@ function removeNode(node: Node): void {
   throw new Error("Unsupported node type for removal");
 }
 
-function updateArrayValue(prop: ObjectProp, value: JsonValue[]): void {
-  const existingArray = prop.valueIfArray();
-  if (!existingArray) {
-    // Not an array currently, replace with array and format as multiline
-    prop.setValue(value);
-
-    // Format new array as multiline
-    if (value.length > 0) {
-      prop.valueIfArrayOrThrow().ensureMultiline();
-    }
-    return;
-  }
-
+function updateArray(
+  existingArray: NonNullable<ReturnType<Node["asArray"]>>,
+  value: JsonValue[],
+): void {
   const existingElements = existingArray.elements();
 
   // Remove excess elements from the end first to avoid index issues
@@ -175,7 +181,6 @@ function updateArrayValue(prop: ObjectProp, value: JsonValue[]): void {
   }
 
   // Update or insert elements
-  // Process in reverse when we need to remove and insert to handle index shifts
   const indicesToReplace: number[] = [];
 
   for (let i = 0; i < value.length; i++) {
@@ -183,6 +188,25 @@ function updateArrayValue(prop: ObjectProp, value: JsonValue[]): void {
 
     if (i < existingElements.length) {
       const existingElement = existingElements[i];
+
+      // Handle nested objects - recursively update them
+      if (newValue !== null && typeof newValue === "object" && !Array.isArray(newValue)) {
+        const existingObj = existingElement.asObject();
+        if (existingObj) {
+          updateObject(existingObj, newValue);
+          continue;
+        }
+      }
+
+      // Handle nested arrays - recursively update them
+      if (Array.isArray(newValue)) {
+        const existingArr = existingElement.asArray();
+        if (existingArr) {
+          updateArray(existingArr, newValue);
+          continue;
+        }
+      }
+
       if (shouldPreserveComments(existingElement, newValue)) {
         // Value hasn't changed - skip update to preserve original formatting
         continue;
@@ -220,21 +244,6 @@ function removePreviousWhitespaces(node: Node): void {
     previous.remove();
     removePreviousWhitespaces(node);
   }
-}
-
-function updateObjectValue(
-  prop: ObjectProp,
-  value: Record<string, JsonValue>,
-): void {
-  const existingObj = prop.valueIfObject();
-  if (!existingObj) {
-    // Not an object currently - replace with the new object value
-    prop.setValue(value);
-    return;
-  }
-
-  // Object exists - recursively update it
-  updateObject(existingObj, value);
 }
 
 /**

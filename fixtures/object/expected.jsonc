@@ -9,7 +9,7 @@
   "modifiedWeirdArray": ["still makes no sense"
   ], // will be less weird
   "renamedProperty": "newvalue",
-  "inlineArray": ["element"], // inline comment
+  "inlineArray": ["element"/* inline comment */],
   "someArray": [
     // Comment at start of array
     // it has 2 lines
@@ -22,7 +22,13 @@
     4.555500, // keep this comment
     "five",
     6,
-    false
+    false,
+    {
+      // a comment inside the object
+      "nested": "object", // keep this comment
+      "changedProp": "onetwothree" // this comment will be kept too
+      // end of nested object comment
+    }
   ], /* another inline comment */
   "someObject": {
     "a": 1,

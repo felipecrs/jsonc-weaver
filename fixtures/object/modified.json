@@ -20,7 +20,11 @@
     4.5555,
     "five",
     6,
-    false
+    false,
+    {
+      "nested": "object",
+      "changedProp": "onetwothree"
+    }
   ],
   "someObject": {
     "a": 1,
