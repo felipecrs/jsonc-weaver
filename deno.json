@@ -16,5 +16,11 @@
   "exclude": [
     "vendor",
     "jsonc-morph"
-  ]
+  ],
+  "publish": {
+    "exclude": [
+      "!jsonc-morph/lib/",
+      "!jsonc-morph/mod.ts"
+    ]
+  }
 }
