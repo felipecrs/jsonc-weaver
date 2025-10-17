@@ -13,4 +13,12 @@ describe("weave", () => {
     const result = weave(original, modified);
     assertEquals(result, expected);
   });
+
+  it("preserves comments and formatting for json array", async () => {
+    const original = await Deno.readTextFile("./fixtures/array/original.jsonc");
+    const modified = JSON.parse(await Deno.readTextFile("./fixtures/array/modified.json"));
+    const expected = await Deno.readTextFile("./fixtures/array/expected.jsonc");
+    const result = weave(original, modified);
+    assertEquals(result, expected);
+  });
 });

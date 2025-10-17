@@ -1,0 +1,32 @@
+[
+  false,
+  [
+    "changed"
+  ],
+  "after",
+  [
+    "still makes no sense"
+  ],
+  "renamedProperty",
+  [
+    "element"
+  ],
+  [
+    "a",
+    true,
+    "changed",
+    "four",
+    "three",
+    4.555500,
+    "five",
+    6,
+    false
+  ],
+  {
+    "a": 1,
+    "d": 4,
+    "c": "three"
+  },
+  "someString",
+  "anotherString"
+]

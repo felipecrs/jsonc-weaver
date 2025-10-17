@@ -1,0 +1,34 @@
+[
+  // Comment at start
+  false,
+  ["changed"],
+  /* Multi-line
+      comment */
+  "after",
+  // Comment before an array
+  ["still makes no sense"
+  ], // weird comment
+  "renamedProperty",
+  ["element"], // inline comment
+  [
+    // Comment at start of array
+    // it has 2 lines
+    "a",
+    true,
+    "changed",
+    "four",
+    // There is a comment here
+    "three", // element comment
+    4.555500, // keep this comment
+    "five",
+    6,
+    false
+  ], /* another inline comment */
+  {
+    "a": 1,
+    "d": 4,
+    "c": "three" // object comment
+  },
+  "someString",
+  "anotherString" // keep this
+]

@@ -247,11 +247,11 @@ function removePreviousWhitespaces(node: Node): void {
 }
 
 /**
- * Weaves changes from a modified object back into the original JSONC string,
+ * Weaves changes from a modified object or array back into the original JSONC string,
  * preserving comments, formatting, and structure.
  *
  * @param original - The original JSONC string
- * @param modified - The modified object containing the desired changes
+ * @param modified - The modified object or array containing the desired changes
  * @returns The updated JSONC string with changes applied and formatting preserved
  *
  * @example
@@ -280,15 +280,21 @@ function removePreviousWhitespaces(node: Node): void {
  * }
  * ```
  */
-export function weave(original: string, modified: object): string {
+export function weave(original: string, modified: object | JsonValue[]): string {
   const root: RootNode = parse(original, {
     allowComments: true,
     allowTrailingCommas: true,
   });
-  const rootObj: JsonObject = root.asObjectOrThrow();
 
-  // Update the root object recursively to match the new structure
-  updateObject(rootObj, modified);
+  if (Array.isArray(modified)) {
+    // Handle array as root
+    const rootArray = root.asArrayOrThrow();
+    updateArray(rootArray, modified);
+  } else {
+    // Handle object as root
+    const rootObj = root.asObjectOrThrow();
+    updateObject(rootObj, modified);
+  }
 
   const result = root.toString();
   return result;

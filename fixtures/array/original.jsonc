@@ -1,0 +1,34 @@
+[
+  // Comment at start
+  true,
+  ["should-change"],
+  /* Multi-line
+      comment */
+  "previous",
+  // Comment before an array
+  ["makes no sense"// comment removed
+  ], // weird comment
+  "toBeRenamedProperty", // should be removed
+  ["element"], // inline comment
+  [
+    // Comment at start of array
+    // it has 2 lines
+    "one",
+    false, // this comment will be removed because a primitive value changed
+    "should change", // this comment will be removed because a primitive value changed
+    "two",
+    // There is a comment here
+    "three", // element comment
+    4.555500, // keep this comment
+    5, // this comment will be removed because type changed
+    "six", // this comment will be removed because type changed too
+    true // this comment will be removed because a primitive value changed
+  ], /* another inline comment */
+  {
+    "a": 1,
+    "b": 2,
+    "c": 3 // object comment
+  },
+  "someString",
+  "anotherString" // keep this
+]
