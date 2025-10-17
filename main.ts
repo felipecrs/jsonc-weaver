@@ -12,7 +12,7 @@ function updateObject(targetObj: JsonObject, newObj: object): void {
   const existingProps = new Map(
     targetObj
       .properties()
-      .map((prop) => [prop.nameOrThrow().decodedValue(), prop]),
+      .map((prop) => [prop.nameOrThrow().decodedValue(), prop])
   );
 
   // Track which existing properties we've already processed
@@ -171,7 +171,7 @@ function removeNode(node: Node): void {
 
 function updateArray(
   existingArray: NonNullable<ReturnType<Node["asArray"]>>,
-  value: JsonValue[],
+  value: JsonValue[]
 ): void {
   const existingElements = existingArray.elements();
 
@@ -190,7 +190,11 @@ function updateArray(
       const existingElement = existingElements[i];
 
       // Handle nested objects - recursively update them
-      if (newValue !== null && typeof newValue === "object" && !Array.isArray(newValue)) {
+      if (
+        newValue !== null &&
+        typeof newValue === "object" &&
+        !Array.isArray(newValue)
+      ) {
         const existingObj = existingElement.asObject();
         if (existingObj) {
           updateObject(existingObj, newValue);
@@ -240,7 +244,11 @@ function removePreviousWhitespaces(node: Node): void {
     return;
   }
 
-  if (previous.isWhitespace() || previous.isNewline() || previous.asStringLit()?.rawValue().trim() === "") {
+  if (
+    previous.isWhitespace() ||
+    previous.isNewline() ||
+    previous.asStringLit()?.rawValue().trim() === ""
+  ) {
     previous.remove();
     removePreviousWhitespaces(node);
   }
@@ -280,7 +288,10 @@ function removePreviousWhitespaces(node: Node): void {
  * }
  * ```
  */
-export function weave(original: string, modified: object | JsonValue[]): string {
+export function weave(
+  original: string,
+  modified: object | JsonValue[]
+): string {
   const root: RootNode = parse(original, {
     allowComments: true,
     allowTrailingCommas: true,
