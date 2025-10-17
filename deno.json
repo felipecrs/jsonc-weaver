@@ -1,4 +1,8 @@
 {
+  "name": "@felipecrs/jsonc-weaver",
+  "version": "0.1.0",
+  "license": "MIT",
+  "exports": "./main.ts",
   "tasks": {
     "test": "deno test --allow-read=fixtures",
     "bench": "deno bench --allow-read=fixtures"
