@@ -1,6 +1,6 @@
 import { weave } from "./main.ts";
 import { parse } from "@std/jsonc";
-import { parse as parseJsoncMorph } from "jsonc-morph";
+import { parse as parseJsoncMorph } from "@david/jsonc-morph";
 import { assertEquals } from "@std/assert";
 import type { JsonArray, JsonObject } from "./main.ts";
 
