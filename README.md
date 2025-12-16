@@ -27,8 +27,7 @@ Parse your JSONC with any parser, modify the object, then weave the changes back
 **Code:**
 
 ```typescript
-import { weave } from "@felipecrs/jsonc-weaver";
-import { parse } from "@std/jsonc";
+import { parse, weave } from "@felipecrs/jsonc-weaver";
 
 const data = parse(await Deno.readTextFile("original.jsonc"));
 

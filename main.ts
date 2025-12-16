@@ -5,10 +5,20 @@ import type {
   Node,
   ObjectProp,
 } from "@david/jsonc-morph";
-import { parse } from "@david/jsonc-morph";
+import { parse as parseJsoncMorph, parseToValue } from "@david/jsonc-morph";
 
 export type JsonObject = { [key: string]: JsonValue };
 export type JsonArray = JsonValue[];
+
+/**
+ * Parses a JSONC string into a JavaScript value.
+ *
+ * @param text - The JSONC string to parse
+ * @returns The parsed JavaScript value
+ */
+export function parse(text: string): JsonValue {
+  return parseToValue(text);
+}
 
 /**
  * Weaves changes from a modified object or array back into the original JSONC string,
@@ -48,7 +58,7 @@ export function weave(
   original: string,
   modified: JsonObject | JsonArray
 ): string {
-  const root = parse(original, {
+  const root = parseJsoncMorph(original, {
     allowComments: true,
     allowTrailingCommas: true,
   });

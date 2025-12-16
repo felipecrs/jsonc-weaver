@@ -1,7 +1,6 @@
 import { describe, it } from "@std/testing/bdd";
 import { assertEquals } from "@std/assert";
-import { weave } from "./main.ts";
-import { parse } from "@std/jsonc";
+import { parse, weave } from "./main.ts";
 import type { JsonArray, JsonObject } from "./main.ts";
 
 describe("weave", () => {
