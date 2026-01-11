@@ -1,7 +1,7 @@
 {
   "version": "5",
   "specifiers": {
-    "jsr:@david/jsonc-morph@~0.2.2": "0.2.2",
+    "jsr:@david/jsonc-morph@0.3": "0.3.0",
     "jsr:@std/assert@^1.0.15": "1.0.16",
     "jsr:@std/assert@^1.0.16": "1.0.16",
     "jsr:@std/async@^1.0.15": "1.0.15",
@@ -13,8 +13,8 @@
     "jsr:@std/testing@^1.0.16": "1.0.16"
   },
   "jsr": {
-    "@david/jsonc-morph@0.2.2": {
-      "integrity": "6539a3c06afa5e1b5330febf3dc6bb9a96df93b6504f7cd7c2edd8d5d7744d73"
+    "@david/jsonc-morph@0.3.0": {
+      "integrity": "adf110fbd529af61b8b8394d71a1fa629edc0ba82c17fff5a67d8bfdf6b57587"
     },
     "@std/assert@1.0.16": {
       "integrity": "6a7272ed1eaa77defe76e5ff63ca705d9c495077e2d5fd0126d2b53fc5bd6532",
@@ -57,7 +57,7 @@
   },
   "workspace": {
     "dependencies": [
-      "jsr:@david/jsonc-morph@~0.2.2",
+      "jsr:@david/jsonc-morph@0.3",
       "jsr:@std/assert@^1.0.16",
       "jsr:@std/testing@^1.0.16"
     ]
