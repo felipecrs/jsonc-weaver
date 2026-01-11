@@ -5,7 +5,10 @@ import type {
   Node,
   ObjectProp,
 } from "@david/jsonc-morph";
-import { parse as parseJsoncMorph, parseToValue } from "@david/jsonc-morph";
+import {
+  parse as parseJsoncMorph,
+  parseToValueStrict,
+} from "@david/jsonc-morph";
 
 export type JsonObject = { [key: string]: JsonValue };
 export type JsonArray = JsonValue[];
@@ -17,7 +20,10 @@ export type JsonArray = JsonValue[];
  * @returns The parsed JavaScript value
  */
 export function parse(text: string): JsonValue {
-  return parseToValue(text);
+  return parseToValueStrict(text, {
+    allowComments: true,
+    allowTrailingCommas: true,
+  });
 }
 
 /**
