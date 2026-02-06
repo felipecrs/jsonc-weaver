@@ -5,12 +5,15 @@
   "exports": "./main.ts",
   "tasks": {
     "test": "deno test --allow-read=fixtures",
-    "bench": "deno bench --allow-read=fixtures"
+    "bench": "deno bench --allow-read=fixtures",
+    "build-npm": "deno run -A scripts/build_npm.ts"
   },
   "imports": {
     "@david/jsonc-morph": "jsr:@david/jsonc-morph@^0.3.1",
+    "@deno/dnt": "jsr:@deno/dnt@^0.42.3",
     "@hexagon/proper-tags": "jsr:@hexagon/proper-tags@^2.0.3-alpha.0",
     "@std/assert": "jsr:@std/assert@^1.0.18",
+    "@std/fs": "jsr:@std/fs@^1.0.22",
     "@std/testing": "jsr:@std/testing@^1.0.17"
   },
   "publish": {

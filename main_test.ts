@@ -7,10 +7,10 @@ import type { JsonArray, JsonObject } from "./main.ts";
 describe("weave()", () => {
   it("preserves comments and formatting for json object", async () => {
     const original = await Deno.readTextFile(
-      "./fixtures/object/original.jsonc"
+      import.meta.dirname + "/fixtures/object/original.jsonc",
     );
     const expected = await Deno.readTextFile(
-      "./fixtures/object/expected.jsonc"
+      import.meta.dirname + "/fixtures/object/expected.jsonc",
     );
     const modified = parse(expected) as JsonObject;
     const result = weave(original, modified);
@@ -18,8 +18,12 @@ describe("weave()", () => {
   });
 
   it("preserves comments and formatting for json array", async () => {
-    const original = await Deno.readTextFile("./fixtures/array/original.jsonc");
-    const expected = await Deno.readTextFile("./fixtures/array/expected.jsonc");
+    const original = await Deno.readTextFile(
+      import.meta.dirname + "/fixtures/array/original.jsonc",
+    );
+    const expected = await Deno.readTextFile(
+      import.meta.dirname + "/fixtures/array/expected.jsonc",
+    );
     const modified = parse(expected) as JsonArray;
     const result = weave(original, modified);
     assertEquals(result, expected);
@@ -71,7 +75,7 @@ describe("parse()", () => {
     assertThrows(
       () => parse(invalidJson),
       Error,
-      "Hexadecimal numbers are not allowed"
+      "Hexadecimal numbers are not allowed",
     );
   });
 
@@ -84,7 +88,7 @@ describe("parse()", () => {
     assertThrows(
       () => parse(invalidJson),
       Error,
-      "Expected string for object property"
+      "Expected string for object property",
     );
   });
 
@@ -97,7 +101,7 @@ describe("parse()", () => {
     assertThrows(
       () => parse(invalidJson),
       Error,
-      "Single-quoted strings are not allowed"
+      "Single-quoted strings are not allowed",
     );
   });
 
@@ -110,7 +114,7 @@ describe("parse()", () => {
     assertThrows(
       () => parse(invalidJson),
       Error,
-      "Unary plus on numbers is not allowed"
+      "Unary plus on numbers is not allowed",
     );
   });
 

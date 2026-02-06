@@ -59,7 +59,7 @@ export function parse(text: string): JsonValue {
  */
 export function weave(
   original: string,
-  modified: JsonObject | JsonArray
+  modified: JsonObject | JsonArray,
 ): string {
   const root = parseToAst(original, {
     allowComments: true,
@@ -79,12 +79,12 @@ export function weave(
 
 function updateObject(
   existingObject: JsoncMorphObject,
-  newObject: object
+  newObject: object,
 ): void {
   const existingProps = new Map(
     existingObject
       .properties()
-      .map((prop) => [prop.nameOrThrow().decodedValue(), prop])
+      .map((prop) => [prop.nameOrThrow().decodedValue(), prop]),
   );
 
   const processedKeys = new Set<string>();
@@ -151,7 +151,7 @@ function updateObject(
 
 function updateArray(
   existingArray: JsoncMorphArray,
-  newValues: JsonValue[]
+  newValues: JsonValue[],
 ): void {
   const existingElements = existingArray.elements();
   const matched = new Array(existingElements.length).fill(false);

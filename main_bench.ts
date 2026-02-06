@@ -8,7 +8,9 @@ Deno.bench({
   group: "parse",
   n: 10_000,
   fn: async (b) => {
-    const jsonc = await Deno.readTextFile("./fixtures/object/expected.jsonc");
+    const jsonc = await Deno.readTextFile(
+      import.meta.dirname + "/fixtures/object/expected.jsonc",
+    );
     const parsed = parse(jsonc);
     const json = JSON.stringify(parsed);
 
@@ -26,7 +28,9 @@ Deno.bench({
   baseline: true,
   n: 10_000,
   fn: async (b) => {
-    const jsonc = await Deno.readTextFile("./fixtures/object/expected.jsonc");
+    const jsonc = await Deno.readTextFile(
+      import.meta.dirname + "/fixtures/object/expected.jsonc",
+    );
     const parsed = parse(jsonc);
     const json = JSON.stringify(parsed);
 
@@ -44,7 +48,9 @@ Deno.bench({
   group: "weave-object",
   n: 10_000,
   fn: async (b) => {
-    const jsonc = await Deno.readTextFile("./fixtures/object/expected.jsonc");
+    const jsonc = await Deno.readTextFile(
+      import.meta.dirname + "/fixtures/object/expected.jsonc",
+    );
 
     b.start();
     const result = parseToAst(jsonc).toString();
@@ -61,10 +67,10 @@ Deno.bench({
   n: 10_000,
   fn: async (b) => {
     const original = await Deno.readTextFile(
-      "./fixtures/object/original.jsonc"
+      import.meta.dirname + "/fixtures/object/original.jsonc",
     );
     const expected = await Deno.readTextFile(
-      "./fixtures/object/expected.jsonc"
+      import.meta.dirname + "/fixtures/object/expected.jsonc",
     );
     const modified = parse(expected) as JsonObject;
 
@@ -81,7 +87,9 @@ Deno.bench({
   group: "weave-array",
   n: 10_000,
   fn: async (b) => {
-    const jsonc = await Deno.readTextFile("./fixtures/array/expected.jsonc");
+    const jsonc = await Deno.readTextFile(
+      import.meta.dirname + "/fixtures/array/expected.jsonc",
+    );
 
     b.start();
     const result = parseToAst(jsonc).toString();
@@ -97,8 +105,12 @@ Deno.bench({
   baseline: true,
   n: 10_000,
   fn: async (b) => {
-    const original = await Deno.readTextFile("./fixtures/array/original.jsonc");
-    const expected = await Deno.readTextFile("./fixtures/array/expected.jsonc");
+    const original = await Deno.readTextFile(
+      import.meta.dirname + "/fixtures/array/original.jsonc",
+    );
+    const expected = await Deno.readTextFile(
+      import.meta.dirname + "/fixtures/array/expected.jsonc",
+    );
     const modified = parse(expected) as JsonArray;
 
     b.start();
