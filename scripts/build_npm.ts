@@ -77,6 +77,6 @@ await build({
     await copy("LICENSE", "npm/LICENSE");
     await copy("fixtures", "npm/esm/fixtures");
 
-    await appendLinesToFile("npm/.npmignore", ["/esm/fixtures/"]);
+    await appendLinesToFile("npm/.npmignore", ["/esm/fixtures/", "/esm/deps/"]);
   },
 });
