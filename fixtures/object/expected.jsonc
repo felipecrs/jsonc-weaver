@@ -5,6 +5,7 @@
   /* Multi-line
       comment */
   "modifiedString": "after",
+  "modifiedStringEscaped": "^after\\.txt$", // comment kept
   // Comment before an array
   "modifiedWeirdArray": ["still makes no sense"
   ], // will be less weird

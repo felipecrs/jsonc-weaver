@@ -2,7 +2,7 @@
   "version": "5",
   "specifiers": {
     "jsr:@david/code-block-writer@^13.0.3": "13.0.3",
-    "jsr:@david/jsonc-morph@~0.3.2": "0.3.2",
+    "jsr:@david/jsonc-morph@~0.3.3": "0.3.3",
     "jsr:@deno/dnt@~0.42.3": "0.42.3",
     "jsr:@hexagon/proper-tags@^2.0.2": "2.0.2",
     "jsr:@std/assert@^1.0.17": "1.0.19",
@@ -24,8 +24,8 @@
     "@david/code-block-writer@13.0.3": {
       "integrity": "f98c77d320f5957899a61bfb7a9bead7c6d83ad1515daee92dbacc861e13bb7f"
     },
-    "@david/jsonc-morph@0.3.2": {
-      "integrity": "9c924c5be728896a04d098fd310f12a3010439b44c4628de5fcf2cff8f9b1d37"
+    "@david/jsonc-morph@0.3.3": {
+      "integrity": "94c103728102e2b44f549366d19e8de3d236ee28ee78704ab7b53e3bd8c8a1d7"
     },
     "@deno/dnt@0.42.3": {
       "integrity": "62a917a0492f3c8af002dce90605bb0d41f7d29debc06aca40dba72ab65d8ae3",
@@ -98,7 +98,7 @@
   },
   "workspace": {
     "dependencies": [
-      "jsr:@david/jsonc-morph@~0.3.2",
+      "jsr:@david/jsonc-morph@~0.3.3",
       "jsr:@deno/dnt@~0.42.3",
       "jsr:@hexagon/proper-tags@^2.0.2",
       "jsr:@std/assert@^1.0.19",

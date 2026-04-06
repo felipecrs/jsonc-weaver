@@ -87,6 +87,24 @@ describe("weave()", () => {
     );
   });
 
+  it("changes a value that contains escaped characters", () => {
+    const original = codeBlock`
+      {
+        "key": "/^oldValue\\\\.txt$/"
+      }
+    `;
+    const modified = { key: "/^newValue\\.txt$/" } as JsonObject;
+    const result = weave(original, modified);
+    assertEquals(
+      result,
+      codeBlock`
+        {
+          "key": "/^newValue\\\\.txt$/"
+        }
+      `,
+    );
+  });
+
   it("adds a new property to an object", () => {
     const original = codeBlock`
       {
