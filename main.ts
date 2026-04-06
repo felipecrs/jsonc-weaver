@@ -237,11 +237,10 @@ function executeReplacements(
   newValues: JsonValue[],
   indicesToReplace: number[],
 ): void {
-  const hasSingleElement = existingElements.length === 1;
   for (let i = indicesToReplace.length - 1; i >= 0; i--) {
     const index = indicesToReplace[i];
     const insertedElement = existingArray.insert(index + 1, newValues[index]);
-    if (hasSingleElement) {
+    if (!hasPrecedingNewline(existingElements[index])) {
       removePrecedingWhitespace(insertedElement);
     }
     removeNode(existingElements[index]);
@@ -408,6 +407,17 @@ function findEquivalentElement(
     }
   }
   return -1;
+}
+
+/** Checks if any preceding sibling (skipping whitespace) is a newline. */
+function hasPrecedingNewline(node: Node): boolean {
+  let prev = node.previousSibling();
+  while (prev !== undefined) {
+    if (prev.isNewline()) return true;
+    if (!prev.isWhitespace()) return false;
+    prev = prev.previousSibling();
+  }
+  return false;
 }
 
 /** Iteratively removes whitespace and newline siblings preceding node. */

@@ -244,7 +244,7 @@ describe("weave()", () => {
     assertEquals(result,
       codeBlock`
         [
-        "new"
+          "new"
         ]
       `);
   });
