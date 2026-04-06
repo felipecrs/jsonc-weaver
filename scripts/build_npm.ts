@@ -1,5 +1,7 @@
 import { build } from "@deno/dnt";
 import { copy, emptyDir } from "@std/fs";
+import { parse } from "../main.ts";
+import type { JsonValue } from "@david/jsonc-morph";
 
 async function replaceInFile(
   filePath: string,
@@ -17,9 +19,11 @@ async function appendLinesToFile(filePath: string, lines: string[]) {
   await Deno.writeTextFile(filePath, updatedContent);
 }
 
-async function readJsonFile(filePath: string) {
+async function readJsonFile(
+  filePath: string,
+): Promise<JsonValue> {
   const text = await Deno.readTextFile(filePath);
-  return JSON.parse(text);
+  return parse(text);
 }
 
 await emptyDir("./npm");
@@ -27,7 +31,7 @@ await emptyDir("./npm");
 // https://github.com/denoland/dnt/issues/437#issuecomment-3859954995
 await replaceInFile("deno.json", "jsr:@david/jsonc-morph", "npm:jsonc-morph");
 
-const { version } = await readJsonFile("deno.json");
+const { version } = await readJsonFile("deno.json") as { version: string };
 
 await build({
   entryPoints: ["./main.ts"],

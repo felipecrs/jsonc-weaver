@@ -4,7 +4,8 @@ Modify JSONC files programmatically while preserving comments and formatting.
 
 ## Usage
 
-Parse your JSONC with any parser, modify the object, then weave the changes back.
+Parse your JSONC with any parser, modify the object, then weave the changes
+back.
 
 **`original.jsonc`**:
 
@@ -71,8 +72,11 @@ await Deno.writeTextFile("result.jsonc", result);
 ```
 
 > [!IMPORTANT]
-> The order of properties in the modified object will determine their order in the output JSONC. Avoid reordering properties in your code to maintain the original order.
+> The order of properties in the modified object will determine their order in
+> the output JSONC. Avoid reordering properties in your code to maintain the
+> original order.
 
 ## Credits
 
-This project is powered by [@david/jsonc-morph](https://github.com/dsherret/jsonc-morph).
+This project is powered by
+[@david/jsonc-morph](https://github.com/dsherret/jsonc-morph).

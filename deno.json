@@ -24,5 +24,10 @@
       "!LICENSE",
       "!README.md"
     ]
+  },
+  "fmt": {
+    "exclude": [
+      "fixtures/**/*.jsonc"
+    ]
   }
 }
