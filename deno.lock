@@ -1,7 +1,6 @@
 {
   "version": "5",
   "specifiers": {
-    "jsr:@david/jsonc-morph@~0.3.5": "0.3.5",
     "jsr:@hexagon/proper-tags@^2.0.2": "2.0.2",
     "jsr:@std/assert@^1.0.19": "1.0.19",
     "jsr:@std/async@^1.4.0": "1.4.0",
@@ -13,15 +12,13 @@
     "jsr:@std/testing@^1.0.19": "1.0.19",
     "npm:@sebbo2002/semantic-release-jsr@^4.0.2": "4.0.2",
     "npm:conventional-changelog-conventionalcommits@^10.2.1": "10.2.1",
+    "npm:jsonc-morph@~0.3.5": "0.3.5",
     "npm:npm@11": "11.18.0",
     "npm:semantic-release@*": "25.0.8",
     "npm:semantic-release@25.0.8": "25.0.8",
     "npm:semantic-release@^25.0.8": "25.0.8"
   },
   "jsr": {
-    "@david/jsonc-morph@0.3.5": {
-      "integrity": "c60b33ba2e3add2c2bda45d83b0a029119cbaa09175f9a494c643a2180a15598"
-    },
     "@hexagon/proper-tags@2.0.2": {
       "integrity": "c33ece3140572f4355098380765361ea2f4b596a9ad24467d566f541888ead90"
     },
@@ -857,6 +854,9 @@
     "json-with-bigint@3.5.10": {
       "integrity": "sha512-Vcx+JVNEBts/xfcoCS69sKrOhOk/3TVlvlT+XzUOefVKnnrbYSCKpDCm10pohsJFtsJVYnwa/cXRZ4eElzaM6w=="
     },
+    "jsonc-morph@0.3.5": {
+      "integrity": "sha512-48t3FzTaEcePC0xKtadykUy7iqMx9fpxzigbi0YtNdEiPXUr7CoM1rfyBUKg0HW167eaG0EENdjc8aowa1TMvQ=="
+    },
     "jsonfile@6.2.1": {
       "integrity": "sha512-zwOTdL3rFQ/lRdBnntKVOX6k5cKJwEc1HdilT71BWEu7J41gXIB2MRp+vxduPSwZJPWBxEzv4yH1wYLJGUHX4Q==",
       "dependencies": [
@@ -1618,13 +1618,17 @@
   },
   "workspace": {
     "dependencies": [
-      "jsr:@david/jsonc-morph@~0.3.5",
       "jsr:@hexagon/proper-tags@^2.0.2",
       "jsr:@std/assert@^1.0.19",
-      "jsr:@std/testing@^1.0.19",
-      "npm:@sebbo2002/semantic-release-jsr@^4.0.2",
-      "npm:conventional-changelog-conventionalcommits@^10.2.1",
-      "npm:semantic-release@^25.0.8"
-    ]
+      "jsr:@std/testing@^1.0.19"
+    ],
+    "packageJson": {
+      "dependencies": [
+        "npm:@sebbo2002/semantic-release-jsr@^4.0.2",
+        "npm:conventional-changelog-conventionalcommits@^10.2.1",
+        "npm:jsonc-morph@~0.3.5",
+        "npm:semantic-release@^25.0.8"
+      ]
+    }
   }
 }
