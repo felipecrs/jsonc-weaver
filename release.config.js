@@ -65,7 +65,7 @@ export default {
     [
       "@semantic-release/npm",
       {
-        // Built by `deno task pack-npm` (deno pack + npm metadata patch)
+        // Built by `deno task build-npm` (dnt)
         pkgRoot: "npm",
       },
     ],
