@@ -19,7 +19,12 @@ printf '%s\n' "$original" |
 
 rm -rf "$outdir" "$tarball"
 pack_args=(pack --allow-dirty -o "$tarball")
-[[ $# -gt 0 ]] && pack_args+=(--set-version "$1")
+# deno task forwards a bare "--"; skip it and take the next arg as version
+for arg in "$@"; do
+  [[ "$arg" == "--" ]] && continue
+  pack_args+=(--set-version "$arg")
+  break
+done
 deno "${pack_args[@]}"
 
 mkdir "$outdir"
