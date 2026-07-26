@@ -267,6 +267,42 @@ describe("weave()", () => {
       `);
   });
 
+  it("removes trailing comment when an array element value changes", () => {
+    const original = codeBlock`
+      [
+        false, // stale comment about the old value
+        "keep"
+      ]
+    `;
+    const modified = [true, "keep"] as JsonArray;
+    const result = weave(original, modified);
+    assertEquals(
+      result,
+      codeBlock`
+        [
+          true,
+          "keep"
+        ]
+      `,
+    );
+  });
+
+  it("removes comment jammed onto an array element when its value changes", () => {
+    const original = codeBlock`
+      ["old"// comment about old value
+      ]
+    `;
+    const modified = ["new"] as JsonArray;
+    const result = weave(original, modified);
+    assertEquals(
+      result,
+      codeBlock`
+        ["new"
+        ]
+      `,
+    );
+  });
+
   it("handles all value types in an object", () => {
     const original = codeBlock`
       {

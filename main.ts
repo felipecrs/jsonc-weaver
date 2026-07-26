@@ -232,18 +232,14 @@ function appendNewElements(
 
 /** Phase 3: Replace unmatched elements at queued indices with new values. */
 function executeReplacements(
-  existingArray: JsoncMorphArray,
   existingElements: Node[],
   newValues: JsonValue[],
   indicesToReplace: number[],
 ): void {
-  for (let i = indicesToReplace.length - 1; i >= 0; i--) {
-    const index = indicesToReplace[i];
-    const insertedElement = existingArray.insert(index + 1, newValues[index]);
-    if (!hasPrecedingNewline(existingElements[index])) {
-      removePrecedingWhitespace(insertedElement);
-    }
-    removeNode(existingElements[index]);
+  for (const index of indicesToReplace) {
+    const element = existingElements[index];
+    removeTrailingComments(element);
+    replaceNodeValue(element, newValues[index]);
   }
 }
 
@@ -254,7 +250,7 @@ function removeUnmatchedElements(
 ): void {
   for (let i = existingElements.length - 1; i >= 0; i--) {
     if (!matched[i]) {
-      removeNode(existingElements[i]);
+      existingElements[i].remove();
     }
   }
 }
@@ -271,12 +267,7 @@ function updateArray(
     newValues,
   );
   appendNewElements(existingArray, existingElements.length, newValues);
-  executeReplacements(
-    existingArray,
-    existingElements,
-    newValues,
-    indicesToReplace,
-  );
+  executeReplacements(existingElements, newValues, indicesToReplace);
   removeUnmatchedElements(existingElements, matched);
 }
 
@@ -364,33 +355,56 @@ function areValuesEquivalent(node: Node, newValue: JsonValue): boolean {
   return false;
 }
 
-/** Removes a node from the AST by dispatching to the appropriate typed removal method. */
-function removeNode(node: Node): void {
-  const removers: Array<[() => boolean, () => void]> = [
-    [() => node.isString(), () => node.asStringLitOrThrow().remove()],
-    [() => node.isNumber(), () => node.asNumberLitOrThrow().remove()],
-    [() => node.isBoolean(), () => node.asBooleanLitOrThrow().remove()],
-    [() => node.isNull(), () => node.asNullKeywordOrThrow().remove()],
-  ];
-
-  for (const [check, remove] of removers) {
-    if (check()) {
-      remove();
-      return;
-    }
+/** Replaces a value node in-place by dispatching to the appropriate typed replaceWith. */
+function replaceNodeValue(node: Node, newValue: JsonValue): void {
+  if (node.isString()) {
+    node.asStringLitOrThrow().replaceWith(newValue);
+    return;
   }
-
+  if (node.isNumber()) {
+    node.asNumberLitOrThrow().replaceWith(newValue);
+    return;
+  }
+  if (node.isBoolean()) {
+    node.asBooleanLitOrThrow().replaceWith(newValue);
+    return;
+  }
+  if (node.isNull()) {
+    node.asNullKeywordOrThrow().replaceWith(newValue);
+    return;
+  }
   if (node.isContainer()) {
     const array = node.asArray();
     if (array) {
-      array.remove();
+      array.replaceWith(newValue);
       return;
     }
-    node.asObjectOrThrow().remove();
+    node.asObjectOrThrow().replaceWith(newValue);
     return;
   }
 
-  throw new Error("Unsupported node type for removal");
+  throw new Error("Unsupported node type for replacement");
+}
+
+/**
+ * Removes comments trailing a value node (after optional comma and whitespace),
+ * stopping at the next structural token or newline.
+ */
+function removeTrailingComments(node: Node): void {
+  let next = node.nextSibling();
+  while (next !== undefined) {
+    if (next.isComment()) {
+      const comment = next;
+      next = next.nextSibling();
+      comment.remove();
+      continue;
+    }
+    if (next.isWhitespace() || next.isComma()) {
+      next = next.nextSibling();
+      continue;
+    }
+    break;
+  }
 }
 
 /** Searches elements[startIndex..endIndex) for an unmatched node equivalent to value. Returns index or -1. */
@@ -407,29 +421,4 @@ function findEquivalentElement(
     }
   }
   return -1;
-}
-
-/** Checks if any preceding sibling (skipping whitespace) is a newline. */
-function hasPrecedingNewline(node: Node): boolean {
-  let prev = node.previousSibling();
-  while (prev !== undefined) {
-    if (prev.isNewline()) return true;
-    if (!prev.isWhitespace()) return false;
-    prev = prev.previousSibling();
-  }
-  return false;
-}
-
-/** Iteratively removes whitespace and newline siblings preceding node. */
-function removePrecedingWhitespace(node: Node): void {
-  let previous = node.previousSibling();
-  while (
-    previous !== undefined &&
-    (previous.isWhitespace() ||
-      previous.isNewline() ||
-      previous.asStringLit()?.rawValue().trim() === "")
-  ) {
-    previous.remove();
-    previous = node.previousSibling();
-  }
 }
