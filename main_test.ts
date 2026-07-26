@@ -369,6 +369,21 @@ describe("parse()", () => {
     assertThrows(() => parse(invalidJson), Error, "Expected comma");
   });
 
+  it("throws error when array has missing comma", () => {
+    const invalidJson = codeBlock`
+      [
+        1
+        2
+      ]
+    `;
+    assertThrows(() => parse(invalidJson), Error, "Expected comma");
+  });
+
+  it("throws error when adjacent digits would scan as multiple array elements", () => {
+    // Without a comma, jsonc-parser scans "01" as 0 then 1; strict mode rejects it.
+    assertThrows(() => parse("[01]"), Error, "Expected comma");
+  });
+
   it("throws error when json has hexadecimal numbers", () => {
     const invalidJson = codeBlock`
       {
