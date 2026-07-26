@@ -31,7 +31,21 @@ await emptyDir("./npm");
 // https://github.com/denoland/dnt/issues/437#issuecomment-3859954995
 await replaceInFile("deno.json", "jsr:@david/jsonc-morph", "npm:jsonc-morph");
 
-const { version } = await readJsonFile("deno.json") as { version: string };
+const {
+  name,
+  version,
+  description,
+  license,
+  repository,
+  bugs,
+} = await readJsonFile("package.json") as {
+  name: string;
+  version: string;
+  description: string;
+  license: string;
+  repository: { type: string; url: string };
+  bugs: { url: string };
+};
 
 await build({
   entryPoints: ["./main.ts"],
@@ -43,18 +57,12 @@ await build({
     deno: "dev",
   },
   package: {
-    name: "jsonc-weaver",
+    name,
     version,
-    description:
-      "Modify JSONC files programmatically while preserving comments and formatting.",
-    license: "MIT",
-    repository: {
-      type: "git",
-      url: "git+https://github.com/felipecrs/jsonc-weaver.git",
-    },
-    bugs: {
-      url: "https://github.com/felipecrs/jsonc-weaver/issues",
-    },
+    description,
+    license,
+    repository,
+    bugs,
   },
   // https://github.com/denoland/dnt/issues/312#issuecomment-1573821661
   filterDiagnostic(diagnostic) {
