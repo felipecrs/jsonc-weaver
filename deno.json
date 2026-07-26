@@ -1,6 +1,6 @@
 {
   "name": "@felipecrs/jsonc-weaver",
-  "version": "0.2.4",
+  "version": "0.0.0-development",
   "license": "MIT",
   "exports": "./main.ts",
   "tasks": {
@@ -29,5 +29,9 @@
     "exclude": [
       "fixtures/**/*.jsonc"
     ]
-  }
+  },
+  "exclude": [
+    "npm",
+    "node_modules"
+  ]
 }

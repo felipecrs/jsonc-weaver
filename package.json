@@ -1,0 +1,26 @@
+{
+  "name": "jsonc-weaver",
+  "description": "Modify JSONC files programmatically while preserving comments and formatting.",
+  "version": "0.0.0-development",
+  "private": true,
+  "author": "Felipe Santos @felipecrs",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/felipecrs/jsonc-weaver.git"
+  },
+  "bugs": {
+    "url": "https://github.com/felipecrs/jsonc-weaver/issues"
+  },
+  "homepage": "https://github.com/felipecrs/jsonc-weaver#readme",
+  "license": "MIT",
+  "type": "module",
+  "devDependencies": {
+    "@sebbo2002/semantic-release-jsr": "^4.0.2",
+    "conventional-changelog-conventionalcommits": "^10.2.1",
+    "semantic-release": "^25.0.8"
+  },
+  "scripts": {
+    "test": "deno task test",
+    "build": "deno task build-npm"
+  }
+}
