@@ -49,9 +49,10 @@ jobs:
         with:
           node-version: lts/*
           registry-url: https://registry.npmjs.org
-      - run: deno task build-npm
-      - run: npm ci
-      - run: npx semantic-release
+      # `deno pack` synthesizes package.json from deno.json; no root package.json.
+      - run: deno task pack-npm
+      - run: npm ci --prefix release
+      - run: npm exec --prefix release -- semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

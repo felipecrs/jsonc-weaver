@@ -4,8 +4,8 @@ import type {
   JsonValue,
   Node,
   ObjectProp,
-} from "@david/jsonc-morph";
-import { parse as parseToAst, parseToValueStrict } from "@david/jsonc-morph";
+} from "jsonc-morph";
+import { parse as parseToAst, parseToValueStrict } from "jsonc-morph";
 
 export type JsonObject = { [key: string]: JsonValue };
 export type JsonArray = JsonValue[];

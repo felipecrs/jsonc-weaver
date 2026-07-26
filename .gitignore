@@ -1,3 +1,5 @@
 /vendor/
 /npm/
 /node_modules/
+/release/node_modules/
+*.tgz
