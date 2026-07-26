@@ -1,9 +1,6 @@
 #!/usr/bin/env bash
 # Build an npm package via `deno pack` and extract it to ./npm.
-#
-# Runtime deps come from package.json (jsonc-morph), so imports stay bare
-# "jsonc-morph" and the source tree is never modified. Pack synthesizes
-# entrypoints/deps; we only merge a few package.json fields into the archive.
+# Source tree is not modified. npm-only metadata is written into the archive.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -26,15 +23,20 @@ mkdir "$outdir"
 tar -xzf "$tarball" -C "$outdir" --strip-components=1
 rm -f "$tarball"
 
-# Merge npm metadata from package.json that pack doesn't put in the archive.
+# Unscoped npm name + fields deno pack does not synthesize from deno.json.
 deno eval "
-const root = JSON.parse(await Deno.readTextFile('package.json'));
 const path = 'npm/package.json';
 const pkg = JSON.parse(await Deno.readTextFile(path));
-for (const key of ['description', 'author', 'repository', 'bugs', 'homepage']) {
-  if (root[key] != null) pkg[key] = root[key];
-}
-if (root.name) pkg.name = root.name;
+pkg.name = 'jsonc-weaver';
+pkg.description =
+  'Modify JSONC files programmatically while preserving comments and formatting.';
+pkg.author = 'Felipe Santos @felipecrs';
+pkg.repository = {
+  type: 'git',
+  url: 'git+https://github.com/felipecrs/jsonc-weaver.git',
+};
+pkg.bugs = { url: 'https://github.com/felipecrs/jsonc-weaver/issues' };
+pkg.homepage = 'https://github.com/felipecrs/jsonc-weaver#readme';
 if (Deno.args[0]) pkg.version = Deno.args[0];
 await Deno.writeTextFile(path, JSON.stringify(pkg, null, 2) + '\n');
 " "$version"
