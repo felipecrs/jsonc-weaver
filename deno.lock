@@ -1,15 +1,9 @@
 {
   "version": "5",
   "specifiers": {
-    "jsr:@hexagon/proper-tags@^2.0.2": "2.0.2",
-    "jsr:@std/assert@^1.0.19": "1.0.19",
-    "jsr:@std/async@^1.4.0": "1.4.0",
-    "jsr:@std/data-structures@^1.1.0": "1.1.0",
-    "jsr:@std/fs@^1.0.24": "1.0.24",
-    "jsr:@std/internal@^1.0.12": "1.0.14",
-    "jsr:@std/internal@^1.0.14": "1.0.14",
-    "jsr:@std/path@^1.1.5": "1.1.5",
-    "jsr:@std/testing@^1.0.19": "1.0.19",
+    "npm:@jsr/hexagon__proper-tags@^2.0.2": "2.0.2",
+    "npm:@jsr/std__assert@^1.0.19": "1.0.19",
+    "npm:@jsr/std__testing@^1.0.19": "1.0.19",
     "npm:@sebbo2002/semantic-release-jsr@^4.0.2": "4.0.2",
     "npm:conventional-changelog-conventionalcommits@^10.2.1": "10.2.1",
     "npm:jsonc-morph@~0.3.5": "0.3.5",
@@ -17,49 +11,6 @@
     "npm:semantic-release@*": "25.0.8",
     "npm:semantic-release@25.0.8": "25.0.8",
     "npm:semantic-release@^25.0.8": "25.0.8"
-  },
-  "jsr": {
-    "@hexagon/proper-tags@2.0.2": {
-      "integrity": "c33ece3140572f4355098380765361ea2f4b596a9ad24467d566f541888ead90"
-    },
-    "@std/assert@1.0.19": {
-      "integrity": "eaada96ee120cb980bc47e040f82814d786fe8162ecc53c91d8df60b8755991e",
-      "dependencies": [
-        "jsr:@std/internal@^1.0.12"
-      ]
-    },
-    "@std/async@1.4.0": {
-      "integrity": "4d70b008634f571cff9b554090d628c76141c32613aae0ff283fd5fa23d0c379"
-    },
-    "@std/data-structures@1.1.0": {
-      "integrity": "c35ae4ad5d8e41a38573c2fe3e19b18ea2505f63cfea201edcb8720aca1f7f58"
-    },
-    "@std/fs@1.0.24": {
-      "integrity": "f3061b45b81673a2bece689da041df32d174be064c89eb6397fb5718d3fb7877",
-      "dependencies": [
-        "jsr:@std/path"
-      ]
-    },
-    "@std/internal@1.0.14": {
-      "integrity": "291516b3d4c35024d6ffbc0a9df5bf4c64116e05b50012cf846710152d2ffdf7"
-    },
-    "@std/path@1.1.5": {
-      "integrity": "ccea00982ea28c36becaf6e62f855406c76a8c32d462f66f415bbb7d83a271bc",
-      "dependencies": [
-        "jsr:@std/internal@^1.0.14"
-      ]
-    },
-    "@std/testing@1.0.19": {
-      "integrity": "f4236172365b216728dc3cc8b5e80a9f4c33083d1e4ede7613d5b25b4014898e",
-      "dependencies": [
-        "jsr:@std/assert",
-        "jsr:@std/async",
-        "jsr:@std/data-structures",
-        "jsr:@std/fs",
-        "jsr:@std/internal@^1.0.14",
-        "jsr:@std/path"
-      ]
-    }
   },
   "npm": {
     "@actions/core@3.0.1": {
@@ -101,6 +52,62 @@
     },
     "@conventional-changelog/template@1.2.1": {
       "integrity": "sha512-TzlTVpKPjaqW6qOYjQcYUDuGsLCNsvFHVBXkYGTAnf5V37jCWrE5haKNXzz0WZUtVHjrpV76L1buANjwXMfT8w=="
+    },
+    "@jsr/hexagon__proper-tags@2.0.2": {
+      "integrity": "sha512-rAoMuo/QJOzXOcnKb3Jn6+NS2Lqb3JQ9qZfdpu5P7yfk3SgBYTKsr3brftLWkVgyh4cBOJNigYmSvRa6gZIo0Q==",
+      "tarball": "https://npm.jsr.io/~/11/@jsr/hexagon__proper-tags/2.0.2.tgz"
+    },
+    "@jsr/std__assert@1.0.19": {
+      "integrity": "sha512-pEj6RPkGbqlgRmyKwATp4cUs6+ijxtdrv3bq8v1d2I2CEcMEyPaO8cVKro61wGRDH4cNg8Zx6haztvK/9m7gkA==",
+      "dependencies": [
+        "@jsr/std__internal"
+      ],
+      "tarball": "https://npm.jsr.io/~/11/@jsr/std__assert/1.0.19.tgz"
+    },
+    "@jsr/std__async@1.5.0": {
+      "integrity": "sha512-I2Qekl1oQYM+dpI2RQUCKi1TBuaA7Od3LNzxcqls9s1e2ytiZyREL4403qHJ6UbLNAwbqO2ZhdWAWDUQAajyiA==",
+      "dependencies": [
+        "@jsr/std__data-structures"
+      ],
+      "tarball": "https://npm.jsr.io/~/11/@jsr/std__async/1.5.0.tgz"
+    },
+    "@jsr/std__data-structures@1.1.1": {
+      "integrity": "sha512-ceWGRdAPq3oD2If4k/JvgL/bskN5VohnM6wINlJhYLz4yCW9cmHFcGsrhRgh9HbD9xhXi9sEQoiHQG5B9caHEg==",
+      "dependencies": [
+        "@jsr/std__assert"
+      ],
+      "tarball": "https://npm.jsr.io/~/11/@jsr/std__data-structures/1.1.1.tgz"
+    },
+    "@jsr/std__fs@1.0.24": {
+      "integrity": "sha512-UunW2Rg++9sA74NJnYMGTsMVQgoFRAwPP02wRRohL0PQBNorbyxHiyCMRaxYQCtLepTLkC4nUyMtcwrGKqTR6g==",
+      "dependencies": [
+        "@jsr/std__internal",
+        "@jsr/std__path"
+      ],
+      "tarball": "https://npm.jsr.io/~/11/@jsr/std__fs/1.0.24.tgz"
+    },
+    "@jsr/std__internal@1.0.14": {
+      "integrity": "sha512-JT8b/t40WcR9q0GDwRZUooY7aXeXnFal8iidE/5TckdAFtvpVAsaJ71/Xgf1SfoChs41s6CZkuCYM8toaNgdvA==",
+      "tarball": "https://npm.jsr.io/~/11/@jsr/std__internal/1.0.14.tgz"
+    },
+    "@jsr/std__path@1.1.6": {
+      "integrity": "sha512-H1Cmg6z8jFyIsQbVV+vZB4eOx4k6Qg8lyUM6l7nZysj5MZumg89kb0M1bsPBTGQis3fw6mJFkJELo5+AK6oCFA==",
+      "dependencies": [
+        "@jsr/std__internal"
+      ],
+      "tarball": "https://npm.jsr.io/~/11/@jsr/std__path/1.1.6.tgz"
+    },
+    "@jsr/std__testing@1.0.19": {
+      "integrity": "sha512-maQIRFWIcTTWB7ITYIVbql1Q3KA9AsgR4/Ep2SfEq65V2SxQq52iLcFxuvX0azRp1leBCb8mBUXZr389SajY7Q==",
+      "dependencies": [
+        "@jsr/std__assert",
+        "@jsr/std__async",
+        "@jsr/std__data-structures",
+        "@jsr/std__fs",
+        "@jsr/std__internal",
+        "@jsr/std__path"
+      ],
+      "tarball": "https://npm.jsr.io/~/11/@jsr/std__testing/1.0.19.tgz"
     },
     "@octokit/auth-token@6.0.0": {
       "integrity": "sha512-P4YJBPdPSpWTQ1NU4XYdvHvXJJDxM6YwpS0FZHRgP7YFkdVxsWcpWGy/NVqlAA7PcPCnMacXlRm1y2PFZRWL/w=="
@@ -1617,13 +1624,11 @@
     }
   },
   "workspace": {
-    "dependencies": [
-      "jsr:@hexagon/proper-tags@^2.0.2",
-      "jsr:@std/assert@^1.0.19",
-      "jsr:@std/testing@^1.0.19"
-    ],
     "packageJson": {
       "dependencies": [
+        "npm:@jsr/hexagon__proper-tags@^2.0.2",
+        "npm:@jsr/std__assert@^1.0.19",
+        "npm:@jsr/std__testing@^1.0.19",
         "npm:@sebbo2002/semantic-release-jsr@^4.0.2",
         "npm:conventional-changelog-conventionalcommits@^10.2.1",
         "npm:jsonc-morph@~0.3.5",

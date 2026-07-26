@@ -3,17 +3,6 @@
   "version": "0.0.0-development",
   "license": "MIT",
   "exports": "./main.ts",
-  "tasks": {
-    "test": "deno test --allow-read=fixtures",
-    "bench": "deno bench --allow-read=fixtures",
-    "pack-npm": "bash scripts/pack_npm.sh",
-    "release": "deno run -A npm:semantic-release"
-  },
-  "imports": {
-    "@hexagon/proper-tags": "jsr:@hexagon/proper-tags@^2.0.2",
-    "@std/assert": "jsr:@std/assert@^1.0.19",
-    "@std/testing": "jsr:@std/testing@^1.0.19"
-  },
   "publish": {
     "exclude": [
       "*",

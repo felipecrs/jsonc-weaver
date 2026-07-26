@@ -17,8 +17,17 @@
     "jsonc-morph": "^0.3.5"
   },
   "devDependencies": {
+    "@hexagon/proper-tags": "npm:@jsr/hexagon__proper-tags@^2.0.2",
     "@sebbo2002/semantic-release-jsr": "^4.0.2",
+    "@std/assert": "npm:@jsr/std__assert@^1.0.19",
+    "@std/testing": "npm:@jsr/std__testing@^1.0.19",
     "conventional-changelog-conventionalcommits": "^10.2.1",
     "semantic-release": "^25.0.8"
+  },
+  "scripts": {
+    "test": "deno test --allow-read=fixtures",
+    "bench": "deno bench --allow-read=fixtures",
+    "pack-npm": "bash scripts/pack_npm.sh",
+    "release": "deno run -A npm:semantic-release"
   }
 }
