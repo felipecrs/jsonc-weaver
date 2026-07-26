@@ -1,5 +1,5 @@
 /**
- * @type {import("npm:semantic-release@^25.0.8").GlobalConfig}
+ * @type {import("semantic-release").GlobalConfig}
  */
 export default {
   plugins: [
