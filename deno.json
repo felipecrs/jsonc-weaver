@@ -6,7 +6,7 @@
   "tasks": {
     "test": "deno test --allow-read=fixtures",
     "bench": "deno bench --allow-read=fixtures",
-    "pack-npm": "deno run -A scripts/pack_npm.ts",
+    "pack-npm": "bash scripts/pack_npm.sh",
     "release": "deno run -A npm:semantic-release"
   },
   "imports": {
