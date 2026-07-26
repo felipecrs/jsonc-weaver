@@ -10,13 +10,12 @@
     "jsr:@std/data-structures@^1.1.0": "1.1.0",
     "jsr:@std/fmt@1": "1.0.10",
     "jsr:@std/fs@1": "1.0.24",
-    "jsr:@std/fs@^1.0.23": "1.0.24",
     "jsr:@std/fs@^1.0.24": "1.0.24",
     "jsr:@std/internal@^1.0.12": "1.0.14",
     "jsr:@std/internal@^1.0.14": "1.0.14",
     "jsr:@std/path@1": "1.1.5",
     "jsr:@std/path@^1.1.5": "1.1.5",
-    "jsr:@std/testing@^1.0.18": "1.0.19",
+    "jsr:@std/testing@^1.0.19": "1.0.19",
     "jsr:@ts-morph/bootstrap@0.27": "0.27.0",
     "jsr:@ts-morph/common@0.27": "0.27.0"
   },
@@ -102,8 +101,8 @@
       "jsr:@deno/dnt@~0.42.3",
       "jsr:@hexagon/proper-tags@^2.0.2",
       "jsr:@std/assert@^1.0.19",
-      "jsr:@std/fs@^1.0.23",
-      "jsr:@std/testing@^1.0.18"
+      "jsr:@std/fs@^1.0.24",
+      "jsr:@std/testing@^1.0.19"
     ]
   }
 }
