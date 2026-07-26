@@ -28,9 +28,11 @@ back.
 **Code:**
 
 ```typescript
+import { readFile, writeFile } from "node:fs/promises";
 import { parse, weave } from "@felipecrs/jsonc-weaver";
 
-const data = parse(await Deno.readTextFile("original.jsonc"));
+const original = await readFile("original.jsonc", "utf8");
+const data = parse(original);
 
 // Modify properties
 data.name = "awesome-app";
@@ -50,7 +52,7 @@ data.newSetting = "added";
 
 const result = weave(original, data);
 
-await Deno.writeTextFile("result.jsonc", result);
+await writeFile("result.jsonc", result);
 ```
 
 **`result.jsonc`**:

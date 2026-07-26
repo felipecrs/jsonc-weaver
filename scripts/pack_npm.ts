@@ -6,9 +6,12 @@
  * - map JSR deps onto their npm equivalents (and rewrite imports)
  * - add package.json fields that are not expressed in deno.json
  */
+import { spawnSync } from "node:child_process";
+import { mkdir, readdir, readFile, rm, writeFile } from "node:fs/promises";
+import process from "node:process";
 import { parse } from "../main.ts";
 
-const version = Deno.args[0];
+const version = process.argv[2];
 const tarball = "npm.tgz";
 const outDir = "npm";
 
@@ -18,46 +21,28 @@ const importRewrites: Array<[from: string, to: string]> = [
   ["@jsr/david__jsonc-morph", "jsonc-morph"],
 ];
 
-async function rm(path: string, recursive = false) {
-  try {
-    await Deno.remove(path, { recursive });
-  } catch (error) {
-    if (!(error instanceof Deno.errors.NotFound)) {
-      throw error;
-    }
+function run(command: string, args: string[]) {
+  const result = spawnSync(command, args, { stdio: "inherit" });
+  if (result.status !== 0) {
+    process.exit(result.status ?? 1);
   }
 }
 
-await rm(outDir, true);
-await rm(tarball);
+await rm(outDir, { recursive: true, force: true });
+await rm(tarball, { force: true });
 
 const packArgs = ["pack", "--allow-dirty", "-o", tarball];
 if (version) {
   packArgs.push("--set-version", version);
 }
+run("deno", packArgs);
 
-const pack = await new Deno.Command("deno", {
-  args: packArgs,
-  stdout: "inherit",
-  stderr: "inherit",
-}).output();
-if (!pack.success) {
-  Deno.exit(pack.code);
-}
-
-await Deno.mkdir(outDir, { recursive: true });
-const extract = await new Deno.Command("tar", {
-  args: ["-xzf", tarball, "-C", outDir, "--strip-components=1"],
-  stdout: "inherit",
-  stderr: "inherit",
-}).output();
-if (!extract.success) {
-  Deno.exit(extract.code);
-}
-await rm(tarball);
+await mkdir(outDir, { recursive: true });
+run("tar", ["-xzf", tarball, "-C", outDir, "--strip-components=1"]);
+await rm(tarball, { force: true });
 
 const packageJsonPath = `${outDir}/package.json`;
-const pkg = parse(await Deno.readTextFile(packageJsonPath)) as Record<
+const pkg = parse(await readFile(packageJsonPath, "utf8")) as Record<
   string,
   unknown
 >;
@@ -87,18 +72,15 @@ if (pkg.dependencies && typeof pkg.dependencies === "object") {
   pkg.dependencies = next;
 }
 
-await Deno.writeTextFile(
-  packageJsonPath,
-  JSON.stringify(pkg, null, 2) + "\n",
-);
+await writeFile(packageJsonPath, JSON.stringify(pkg, null, 2) + "\n");
 
 // Rewrite import specifiers in emitted modules to match npm package names.
-for await (const entry of Deno.readDir(outDir)) {
-  if (!entry.isFile) continue;
+for (const entry of await readdir(outDir, { withFileTypes: true })) {
+  if (!entry.isFile()) continue;
   if (!/\.(js|mjs|cjs|d\.ts)$/.test(entry.name)) continue;
 
   const path = `${outDir}/${entry.name}`;
-  let text = await Deno.readTextFile(path);
+  let text = await readFile(path, "utf8");
   let changed = false;
   for (const [from, to] of importRewrites) {
     const next = text
@@ -110,7 +92,7 @@ for await (const entry of Deno.readDir(outDir)) {
     }
   }
   if (changed) {
-    await Deno.writeTextFile(path, text);
+    await writeFile(path, text);
   }
 }
 
