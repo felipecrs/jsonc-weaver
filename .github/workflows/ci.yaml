@@ -45,14 +45,9 @@ jobs:
       - uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
-      - uses: actions/setup-node@v7
-        with:
-          node-version: lts/*
-          registry-url: https://registry.npmjs.org
-      # `deno pack` synthesizes package.json from deno.json; no root package.json.
+      - run: deno install
       - run: deno task pack-npm
-      - run: npm ci --prefix release
-      - run: npm exec --prefix release -- semantic-release
+      - run: deno task release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
