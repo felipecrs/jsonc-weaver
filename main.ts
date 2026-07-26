@@ -355,7 +355,7 @@ function areValuesEquivalent(node: Node, newValue: JsonValue): boolean {
   return false;
 }
 
-/** Replaces a value node in-place via the typed replaceWith API. */
+/** Replaces a value node in-place by dispatching to the appropriate typed replaceWith. */
 function replaceNodeValue(node: Node, newValue: JsonValue): void {
   if (node.isString()) {
     node.asStringLitOrThrow().replaceWith(newValue);
@@ -387,12 +387,8 @@ function replaceNodeValue(node: Node, newValue: JsonValue): void {
 }
 
 /**
- * Removes comments that trail a value node (optionally after a comma and
- * whitespace), stopping at the next structural token or newline.
- *
- * Covers both common forms:
- * - `value, // comment`
- * - `value// comment` (no comma; often last array element)
+ * Removes comments trailing a value node (after optional comma and whitespace),
+ * stopping at the next structural token or newline.
  */
 function removeTrailingComments(node: Node): void {
   let next = node.nextSibling();
