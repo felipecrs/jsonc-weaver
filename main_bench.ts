@@ -1,4 +1,3 @@
-import { readFile } from "node:fs/promises";
 import { parse, weave } from "./main.ts";
 import { parse as parseToAst } from "jsonc-morph";
 import { assertEquals } from "@std/assert";
@@ -9,9 +8,8 @@ Deno.bench({
   group: "parse",
   n: 10_000,
   fn: async (b) => {
-    const jsonc = await readFile(
+    const jsonc = await Deno.readTextFile(
       import.meta.dirname + "/fixtures/object/expected.jsonc",
-      "utf8",
     );
     const parsed = parse(jsonc);
     const json = JSON.stringify(parsed);
@@ -30,9 +28,8 @@ Deno.bench({
   baseline: true,
   n: 10_000,
   fn: async (b) => {
-    const jsonc = await readFile(
+    const jsonc = await Deno.readTextFile(
       import.meta.dirname + "/fixtures/object/expected.jsonc",
-      "utf8",
     );
     const parsed = parse(jsonc);
     const json = JSON.stringify(parsed);
@@ -51,9 +48,8 @@ Deno.bench({
   group: "weave-object",
   n: 10_000,
   fn: async (b) => {
-    const jsonc = await readFile(
+    const jsonc = await Deno.readTextFile(
       import.meta.dirname + "/fixtures/object/expected.jsonc",
-      "utf8",
     );
 
     b.start();
@@ -70,13 +66,11 @@ Deno.bench({
   baseline: true,
   n: 10_000,
   fn: async (b) => {
-    const original = await readFile(
+    const original = await Deno.readTextFile(
       import.meta.dirname + "/fixtures/object/original.jsonc",
-      "utf8",
     );
-    const expected = await readFile(
+    const expected = await Deno.readTextFile(
       import.meta.dirname + "/fixtures/object/expected.jsonc",
-      "utf8",
     );
     const modified = parse(expected) as JsonObject;
 
@@ -93,9 +87,8 @@ Deno.bench({
   group: "weave-array",
   n: 10_000,
   fn: async (b) => {
-    const jsonc = await readFile(
+    const jsonc = await Deno.readTextFile(
       import.meta.dirname + "/fixtures/array/expected.jsonc",
-      "utf8",
     );
 
     b.start();
@@ -112,13 +105,11 @@ Deno.bench({
   baseline: true,
   n: 10_000,
   fn: async (b) => {
-    const original = await readFile(
+    const original = await Deno.readTextFile(
       import.meta.dirname + "/fixtures/array/original.jsonc",
-      "utf8",
     );
-    const expected = await readFile(
+    const expected = await Deno.readTextFile(
       import.meta.dirname + "/fixtures/array/expected.jsonc",
-      "utf8",
     );
     const modified = parse(expected) as JsonArray;
 

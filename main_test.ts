@@ -1,4 +1,3 @@
-import { readFile } from "node:fs/promises";
 import { codeBlock } from "@hexagon/proper-tags";
 import { assertEquals, assertThrows } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
@@ -7,13 +6,11 @@ import { parse, weave } from "./main.ts";
 
 describe("weave()", () => {
   it("preserves comments and formatting for json object", async () => {
-    const original = await readFile(
+    const original = await Deno.readTextFile(
       import.meta.dirname + "/fixtures/object/original.jsonc",
-      "utf8",
     );
-    const expected = await readFile(
+    const expected = await Deno.readTextFile(
       import.meta.dirname + "/fixtures/object/expected.jsonc",
-      "utf8",
     );
     const modified = parse(expected) as JsonObject;
     const result = weave(original, modified);
@@ -21,13 +18,11 @@ describe("weave()", () => {
   });
 
   it("preserves comments and formatting for json array", async () => {
-    const original = await readFile(
+    const original = await Deno.readTextFile(
       import.meta.dirname + "/fixtures/array/original.jsonc",
-      "utf8",
     );
-    const expected = await readFile(
+    const expected = await Deno.readTextFile(
       import.meta.dirname + "/fixtures/array/expected.jsonc",
-      "utf8",
     );
     const modified = parse(expected) as JsonArray;
     const result = weave(original, modified);
