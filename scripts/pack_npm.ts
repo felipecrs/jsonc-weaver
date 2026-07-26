@@ -1,21 +1,20 @@
 /**
- * Build an npm package via `deno pack`, then adjust metadata for npm consumers.
+ * Build an npm package via `deno pack`.
  *
- * `deno pack` uses deno.json as the source of truth. We then:
- * - rename the package to the existing unscoped npm name
- * - map JSR deps onto their npm equivalents (and rewrite imports)
- * - add package.json fields that are not expressed in deno.json
+ * Before packing, rewrite JSR dual-published deps to their npm equivalents so
+ * `deno pack` emits correct bare imports and package.json dependencies — no
+ * post-processing of the packed files is required for that.
  */
 import { parse } from "../main.ts";
 
 const version = Deno.args[0];
 const tarball = "npm.tgz";
 const outDir = "npm";
+const denoJsonPath = "deno.json";
 
-/** Specifiers rewritten in emitted JS/d.ts and package.json dependencies. */
-const importRewrites: Array<[from: string, to: string]> = [
-  ["@david/jsonc-morph", "jsonc-morph"],
-  ["@jsr/david__jsonc-morph", "jsonc-morph"],
+/** JSR → npm dual-publish rewrites applied only while packing. */
+const importReplacements: Array<{ fromPrefix: string; toPrefix: string }> = [
+  { fromPrefix: "jsr:@david/jsonc-morph", toPrefix: "npm:jsonc-morph" },
 ];
 
 async function rm(path: string, recursive = false) {
@@ -35,79 +34,61 @@ async function run(command: string, args: string[]) {
     stderr: "inherit",
   }).output();
   if (!result.success) {
-    Deno.exit(result.code);
+    throw new Error(
+      `${command} ${args.join(" ")} failed with exit code ${result.code}`,
+    );
   }
 }
+
+const originalDenoJson = await Deno.readTextFile(denoJsonPath);
+const config = parse(originalDenoJson) as {
+  imports?: Record<string, string>;
+  [key: string]: unknown;
+};
+
+if (!config.imports) {
+  throw new Error(`${denoJsonPath} has no imports map`);
+}
+
+let replaced = 0;
+for (const [key, value] of Object.entries(config.imports)) {
+  for (const { fromPrefix, toPrefix } of importReplacements) {
+    if (value === fromPrefix || value.startsWith(`${fromPrefix}@`)) {
+      config.imports[key] = toPrefix + value.slice(fromPrefix.length);
+      replaced++;
+    }
+  }
+}
+if (replaced === 0) {
+  throw new Error(
+    `No import replacements matched in ${denoJsonPath}; update importReplacements`,
+  );
+}
+
+// Dual-published npm packages may be newer on npm than Deno's default
+// minimum dependency age allows, even when the JSR copy is already usable.
+config.minimumDependencyAge = 0;
 
 await rm(outDir, true);
 await rm(tarball);
 
-const packArgs = ["pack", "--allow-dirty", "-o", tarball];
-if (version) {
-  packArgs.push("--set-version", version);
-}
-await run("deno", packArgs);
+try {
+  await Deno.writeTextFile(
+    denoJsonPath,
+    JSON.stringify(config, null, 2) + "\n",
+  );
 
-await Deno.mkdir(outDir, { recursive: true });
-await run("tar", ["-xzf", tarball, "-C", outDir, "--strip-components=1"]);
-await rm(tarball);
-
-const packageJsonPath = `${outDir}/package.json`;
-const pkg = parse(await Deno.readTextFile(packageJsonPath)) as Record<
-  string,
-  unknown
->;
-
-// Preserve the existing npm package identity (JSR uses the scoped name in deno.json).
-pkg.name = "jsonc-weaver";
-pkg.description =
-  "Modify JSONC files programmatically while preserving comments and formatting.";
-pkg.author = "Felipe Santos @felipecrs";
-pkg.repository = {
-  type: "git",
-  url: "git+https://github.com/felipecrs/jsonc-weaver.git",
-};
-pkg.bugs = {
-  url: "https://github.com/felipecrs/jsonc-weaver/issues",
-};
-pkg.homepage = "https://github.com/felipecrs/jsonc-weaver#readme";
-
-// Map JSR npm-bridge deps to real npm packages.
-if (pkg.dependencies && typeof pkg.dependencies === "object") {
-  const deps = pkg.dependencies as Record<string, string>;
-  const next: Record<string, string> = {};
-  for (const [name, range] of Object.entries(deps)) {
-    const mapped = importRewrites.find(([from]) => from === name)?.[1] ?? name;
-    next[mapped] = range;
+  const packArgs = ["pack", "--allow-dirty", "-o", tarball];
+  if (version) {
+    packArgs.push("--set-version", version);
   }
-  pkg.dependencies = next;
-}
+  await run("deno", packArgs);
 
-await Deno.writeTextFile(
-  packageJsonPath,
-  JSON.stringify(pkg, null, 2) + "\n",
-);
-
-// Rewrite import specifiers in emitted modules to match npm package names.
-for (const entry of Deno.readDirSync(outDir)) {
-  if (!entry.isFile) continue;
-  if (!/\.(js|mjs|cjs|d\.ts)$/.test(entry.name)) continue;
-
-  const path = `${outDir}/${entry.name}`;
-  let text = await Deno.readTextFile(path);
-  let changed = false;
-  for (const [from, to] of importRewrites) {
-    const next = text
-      .replaceAll(`"${from}"`, `"${to}"`)
-      .replaceAll(`'${from}'`, `'${to}'`);
-    if (next !== text) {
-      text = next;
-      changed = true;
-    }
-  }
-  if (changed) {
-    await Deno.writeTextFile(path, text);
-  }
+  await Deno.mkdir(outDir, { recursive: true });
+  await run("tar", ["-xzf", tarball, "-C", outDir, "--strip-components=1"]);
+  await rm(tarball);
+} finally {
+  await Deno.writeTextFile(denoJsonPath, originalDenoJson);
 }
 
 console.log(`npm package ready in ./${outDir}`);
