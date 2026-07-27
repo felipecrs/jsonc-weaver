@@ -1,0 +1,44 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+      - uses: jdx/mise-action@v4
+      - run: deno task test
+
+  release:
+    needs: test
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write # to be able to publish a GitHub release
+      issues: write # to be able to comment on released issues
+      pull-requests: write # to be able to comment on released pull requests
+      id-token: write # npm provenance + JSR OIDC publishing
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: jdx/mise-action@v4
+      # dnt fails if a root node_modules is present; build first, then install release tooling
+      - run: deno task build-npm
+      - run: deno install --node-modules-dir=auto
+      - run: deno task release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
