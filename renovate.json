@@ -10,7 +10,7 @@
   "packageRules": [
     {
       "description": "Automerge non-major dev updates",
-      "matchDepTypes": ["devDependencies", "action"],
+      "matchDepTypes": ["devDependencies", "tools", "action"],
       "matchUpdateTypes": ["minor", "patch"],
       "automerge": true
     },
@@ -23,7 +23,7 @@
       "semanticCommitType": "build"
     },
     {
-      "matchDepTypes": ["devDependencies"],
+      "matchDepTypes": ["devDependencies", "tools"],
       "semanticCommitType": "build",
       "semanticCommitScope": "deps-dev"
     },
