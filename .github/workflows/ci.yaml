@@ -22,9 +22,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v7
-      - uses: denoland/setup-deno@v2
-        with:
-          deno-version: v2.x
+      - uses: jdx/mise-action@v4
       - run: deno task test
 
   release:
@@ -42,13 +40,10 @@ jobs:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      - uses: denoland/setup-deno@v2
-        with:
-          deno-version: v2.x
+      - uses: jdx/mise-action@v4
       # dnt fails if a root node_modules is present; build first, then install release tooling
       - run: deno task build-npm
       - run: deno install --node-modules-dir=auto
       - run: deno task release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
