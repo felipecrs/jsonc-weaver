@@ -30,8 +30,7 @@ back.
 ```typescript
 import { parse, weave } from "@felipecrs/jsonc-weaver";
 
-const original = await Deno.readTextFile("original.jsonc");
-const data = parse(original);
+const data = parse(await Deno.readTextFile("original.jsonc"));
 
 // Modify properties
 data.name = "awesome-app";
