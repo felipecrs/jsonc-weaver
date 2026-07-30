@@ -10,7 +10,11 @@
       "dependencies": ["lint"]
     },
     "bench": "deno bench --allow-read=fixtures",
-    "build-npm": "deno run -A scripts/build_npm.ts"
+    "build-npm": "deno run -A scripts/build_npm.ts",
+    "release": {
+      "command": "DENO_BIN_PATH=$(which deno) deno x semantic-release",
+      "dependencies": ["build-npm"]
+    }
   },
   "nodeModulesDir": "auto",
   "imports": {
