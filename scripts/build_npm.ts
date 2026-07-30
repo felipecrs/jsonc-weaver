@@ -1,37 +1,12 @@
 import { build } from "@deno/dnt";
 import { copy, emptyDir } from "@std/fs";
-import { parse } from "../main.ts";
-import type { JsonValue } from "@david/jsonc-morph";
-
-async function replaceInFile(
-  filePath: string,
-  searchValue: string,
-  replaceValue: string,
-) {
-  const text = await Deno.readTextFile(filePath);
-  const updatedText = text.replaceAll(searchValue, replaceValue);
-  await Deno.writeTextFile(filePath, updatedText);
-}
 
 async function appendLinesToFile(filePath: string, lines: string[]) {
-  const content = await Deno.readTextFile(filePath);
-  const updatedContent = content + "\n" + lines.join("\n") + "\n";
-  await Deno.writeTextFile(filePath, updatedContent);
-}
-
-async function readJsonFile(
-  filePath: string,
-): Promise<JsonValue> {
-  const text = await Deno.readTextFile(filePath);
-  return parse(text);
+  const newContent = "\n" + lines.join("\n") + "\n";
+  await Deno.writeTextFile(filePath, newContent, { append: true });
 }
 
 await emptyDir("./npm");
-
-// https://github.com/denoland/dnt/issues/437#issuecomment-3859954995
-await replaceInFile("deno.json", "jsr:@david/jsonc-morph", "npm:jsonc-morph");
-
-const { version } = await readJsonFile("deno.json") as { version: string };
 
 await build({
   entryPoints: ["./main.ts"],
@@ -42,9 +17,14 @@ await build({
   shims: {
     deno: "dev",
   },
+  mappings: {
+    "jsr:@david/jsonc-morph": {
+      name: "jsonc-morph",
+    },
+  },
   package: {
     name: "jsonc-weaver",
-    version,
+    version: "0.0.0-semantic-release",
     description:
       "Modify JSONC files programmatically while preserving comments and formatting.",
     license: "MIT",
@@ -66,21 +46,19 @@ await build({
     }
     return true;
   },
-  // https://github.com/denoland/dnt/issues/422#issuecomment-2287108730
+  // https://github.com/denoland/dnt/issues/422#issuecomment-2288311193
   compilerOptions: {
     lib: ["ESNext"],
   },
   async postBuild() {
-    await replaceInFile(
-      "deno.json",
-      "npm:jsonc-morph",
-      "jsr:@david/jsonc-morph",
-    );
-
     await copy("README.md", "npm/README.md");
     await copy("LICENSE", "npm/LICENSE");
     await copy("fixtures", "npm/esm/fixtures");
 
-    await appendLinesToFile("npm/.npmignore", ["/esm/fixtures/", "/esm/deps/"]);
+    await appendLinesToFile("npm/.npmignore", [
+      "/esm/fixtures/",
+      // https://github.com/denoland/dnt/issues/486#issuecomment-5125483729
+      "/esm/deps/",
+    ]);
   },
 });
