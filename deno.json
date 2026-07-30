@@ -6,8 +6,7 @@
   "tasks": {
     "test": "deno test --allow-read=fixtures",
     "bench": "deno bench --allow-read=fixtures",
-    "build-npm": "deno run -A scripts/build_npm.ts",
-    "release": "deno run -A npm:semantic-release"
+    "build-npm": "deno run -A scripts/build_npm.ts"
   },
   "nodeModulesDir": "auto",
   "imports": {

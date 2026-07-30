@@ -36,9 +36,7 @@ jobs:
         with:
           fetch-depth: 0
       - uses: jdx/mise-action@v4
-      # dnt fails if a root node_modules is present; build first, then install release tooling
       - run: deno task build-npm
-      - run: deno install --node-modules-dir=auto
-      - run: deno task release
+      - run: deno x semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
