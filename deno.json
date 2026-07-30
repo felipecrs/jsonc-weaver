@@ -6,12 +6,12 @@
   "tasks": {
     "test": "deno test --allow-read=fixtures",
     "bench": "deno bench --allow-read=fixtures",
-    "build-npm": "deno run -A scripts/build_npm.ts",
-    "release": "deno run -A npm:semantic-release"
+    "build-npm": "deno run -A scripts/build_npm.ts"
   },
+  "nodeModulesDir": "auto",
   "imports": {
     "@david/jsonc-morph": "jsr:@david/jsonc-morph@^0.3.5",
-    "@deno/dnt": "jsr:@deno/dnt@^0.42.3",
+    "@deno/dnt": "jsr:@deno/dnt@^0.43.1",
     "@hexagon/proper-tags": "jsr:@hexagon/proper-tags@^2.0.2",
     "@std/assert": "jsr:@std/assert@^1.0.19",
     "@std/fs": "jsr:@std/fs@^1.0.24",
@@ -19,6 +19,11 @@
     "semantic-release": "npm:semantic-release@^25.0.8",
     "@sebbo2002/semantic-release-jsr": "npm:@sebbo2002/semantic-release-jsr@^4.0.2",
     "conventional-changelog-conventionalcommits": "npm:conventional-changelog-conventionalcommits@^10.2.1"
+  },
+  "minimumDependencyAge": {
+    "exclude": [
+      "jsr:@deno/dnt"
+    ]
   },
   "publish": {
     "exclude": [
