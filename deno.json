@@ -4,7 +4,11 @@
   "license": "MIT",
   "exports": "./main.ts",
   "tasks": {
-    "test": "deno test --allow-read=fixtures",
+    "lint": "deno fmt --check && deno check --doc && deno lint",
+    "test": {
+      "command": "deno test --allow-read=fixtures",
+      "dependencies": ["lint"]
+    },
     "bench": "deno bench --allow-read=fixtures",
     "build-npm": "deno run -A scripts/build_npm.ts"
   },

@@ -44,8 +44,9 @@ export function parse(text: string): JsonValue {
  *
  * Usage:
  * ```typescript
- * const original = await readFile('original.jsonc');
- * const modified = JSONC.parse(original);
+ * import { parse, weave, type JsonObject } from "@felipecrs/jsonc-weaver";
+ * const original = await Deno.readTextFile('original.jsonc');
+ * const modified = parse(original) as JsonObject;
  * modified.name = "new-name";
  * modified.version = "2.0.0";
  * const result = weave(original, modified);

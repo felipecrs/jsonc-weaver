@@ -259,12 +259,14 @@ describe("weave()", () => {
     `;
     const modified = ["new"] as JsonArray;
     const result = weave(original, modified);
-    assertEquals(result,
+    assertEquals(
+      result,
       codeBlock`
         [
           "new"
         ]
-      `);
+      `,
+    );
   });
 
   it("removes trailing comment when an array element value changes", () => {
