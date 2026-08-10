@@ -3,7 +3,7 @@
   "specifiers": {
     "jsr:@david/code-block-writer@^13.0.3": "13.0.3",
     "jsr:@david/jsonc-morph@~0.3.5": "0.3.5",
-    "jsr:@deno/dnt@~0.43.1": "0.43.2",
+    "jsr:@deno/dnt@~0.43.2": "0.43.2",
     "jsr:@hexagon/proper-tags@^2.0.2": "2.0.2",
     "jsr:@std/assert@^1.0.19": "1.0.19",
     "jsr:@std/async@^1.5.0": "1.5.0",
@@ -1670,7 +1670,7 @@
   "workspace": {
     "dependencies": [
       "jsr:@david/jsonc-morph@~0.3.5",
-      "jsr:@deno/dnt@~0.43.1",
+      "jsr:@deno/dnt@~0.43.2",
       "jsr:@hexagon/proper-tags@^2.0.2",
       "jsr:@std/assert@^1.0.19",
       "jsr:@std/fs@^1.0.24",
