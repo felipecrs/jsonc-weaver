@@ -20,7 +20,7 @@
     "jsr:@ts-morph/bootstrap@0.29": "0.29.0",
     "jsr:@ts-morph/common@0.29": "0.29.0",
     "npm:@sebbo2002/semantic-release-jsr@^4.0.2": "4.0.2",
-    "npm:conventional-changelog-conventionalcommits@^10.2.1": "10.4.0",
+    "npm:conventional-changelog-conventionalcommits@^10.2.1": "10.4.1",
     "npm:semantic-release@^25.0.8": "25.0.9"
   },
   "jsr": {
@@ -512,8 +512,8 @@
         "compare-func"
       ]
     },
-    "conventional-changelog-conventionalcommits@10.4.0": {
-      "integrity": "sha512-Rriac6ZrAlVm6cy9Bz4NSp+WMHpwNXoPIYex+HjCgduAVUSbnew29DQjQw0C4g9u3HtSYzGiGY+pdBXAZo+4aA==",
+    "conventional-changelog-conventionalcommits@10.4.1": {
+      "integrity": "sha512-jS1LRFSbRoAr6JbhhRy1JYfNNUj5LM3+v49hRE03CgccsiYqgdVj/RTmrw4J1rylrqijHwdOlJWiJa61JHOgHg==",
       "dependencies": [
         "@conventional-changelog/template"
       ]
@@ -751,8 +751,8 @@
     "graceful-fs@4.2.10": {
       "integrity": "sha512-9ByhssR2fPVsNZj478qUUbKfmL0+t5BDVyjShtyZZLiK7ZDAArFFfopyOTj0M05wE2tJPisA4iTnnXl2YoPvOA=="
     },
-    "handlebars@4.7.9": {
-      "integrity": "sha512-4E71E0rpOaQuJR2A3xDZ+GM1HyWYv1clR58tC8emQNeQe3RH7MAzSbat+V0wG78LQBo6m6bzSG/L4pBuCsgnUQ==",
+    "handlebars@4.7.10": {
+      "integrity": "sha512-P5VJMVM7qgBn6vjXMw8WG9uVI+ncf2pi72j4de4yz5ZULLj2RGqLYaKOYGsgyrViQ0tePOVlN1tDCCXXtFqXKg==",
       "dependencies": [
         "minimist",
         "neo-async",
@@ -1110,8 +1110,8 @@
         "p-limit"
       ]
     },
-    "p-map@7.0.8": {
-      "integrity": "sha512-MitaVsCuCFIvOLLPIU7NnfrZvS9H9h7kwMUkDo+T2pEISaJD48IV9S8iIdXB7PsvvdxyYcsSTTrr90XKsbulNw=="
+    "p-map@7.1.0": {
+      "integrity": "sha512-HaSJ9hNZOxTUSATfB48Qi7U2+GF1eECjI39nkeLmCWQrSOYr1z4NepR0rpWiZO77pYwUWU2cJ5NIgsmoFCsYDQ=="
     },
     "p-reduce@3.0.0": {
       "integrity": "sha512-xsrIUgI0Kn6iyDYm9StOpOeK29XM1aboGji26+QEortiFST1hGZaUQOLhtEbqHErPpGW/aSz6allwK2qcptp0Q=="
