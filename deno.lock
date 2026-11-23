@@ -18,8 +18,8 @@
     "jsr:@std/path@^1.1.6": "1.1.6",
     "jsr:@std/testing@^1.0.19": "1.0.21",
     "jsr:@ts-morph/bootstrap@0.29": "0.29.0",
-    "jsr:@ts-morph/common@0.29": "0.29.0",
-    "npm:@sebbo2002/semantic-release-jsr@^4.0.2": "4.0.2",
+    "jsr:@ts-morph/common@0.29": "0.29.1",
+    "npm:@sebbo2002/semantic-release-jsr@^4.0.2": "4.0.3",
     "npm:conventional-changelog-conventionalcommits@^10.2.1": "10.4.1",
     "npm:semantic-release@^25.0.8": "25.0.9"
   },
@@ -91,8 +91,8 @@
         "jsr:@ts-morph/common"
       ]
     },
-    "@ts-morph/common@0.29.0": {
-      "integrity": "14e8f44c5e4297628cf756aed071787dc026c493e36c1cc29ce49dc95e493f8f",
+    "@ts-morph/common@0.29.1": {
+      "integrity": "b46478d7908609729d6fb2c02f016d65169987606e7283ef6b7db24c30d6564f",
       "dependencies": [
         "jsr:@std/fs@1",
         "jsr:@std/path@1"
@@ -246,8 +246,8 @@
         "config-chain"
       ]
     },
-    "@sebbo2002/semantic-release-jsr@4.0.2": {
-      "integrity": "sha512-8ts3nWCxX8sTs7TOxcVDMMCuQcmjGY9ic9FyhbZ5Uevt1xF8xjcekDJuQ0OkwvLYyvVq22h2H5XrSPm9b1IwsA==",
+    "@sebbo2002/semantic-release-jsr@4.0.3": {
+      "integrity": "sha512-hULXM6+hlNYxuIv7FfZjeBItGp2t9G4s8IXGFUTstBYnf06prv+8hcpwwscImIyTXZJxdwx9uq3Psg9HcelTUg==",
       "dependencies": [
         "@semantic-release/error",
         "jsr"
@@ -1070,8 +1070,8 @@
         "unicorn-magic@0.3.0"
       ]
     },
-    "npm@11.21.2": {
-      "integrity": "sha512-7HPApk+AflMUavSseL1Pm6CnYqMIHk53x+KmuhqmTDqPkjPMgxIpTPcTqsE91EKNw4gFBJV9fnXiSdGm1DXq9A==",
+    "npm@11.21.3": {
+      "integrity": "sha512-5Cf+jE+XctbhH/zjOOqXC+ity7eec/Tkk4Ql38tf6w+1htp2wYPHmE4c1R1Es3DY227Ac14+SLrlYJwkBicbTg==",
       "bin": true
     },
     "object-assign@4.1.1": {
